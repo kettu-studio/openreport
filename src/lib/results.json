@@ -1,0 +1,846 @@
+{
+    "SchemaVersion": 2,
+    "CreatedAt": "2025-08-20T11:47:15.866625+02:00",
+    "ArtifactName": ".",
+    "ArtifactType": "filesystem",
+    "Metadata": {
+      "RepoURL": "git@bitbucket.org:samelan/gbc.core.neo.ux.git",
+      "Branch": "devops/jenkins",
+      "Commit": "e940383279cf4b7428d05aa279dbc6deb6c3f5de",
+      "CommitMsg": "WIP",
+      "Author": "Carlos Lopez \u003ccloaction@gmail.com\u003e",
+      "Committer": "Carlos Lopez \u003ccloaction@gmail.com\u003e"
+    },
+    "Results": [
+      {
+        "Target": "node_modules/nswag/bin/binaries/Net50/dotnet-nswag.deps.json",
+        "Class": "lang-pkgs",
+        "Type": "dotnet-core",
+        "Vulnerabilities": [
+          {
+            "VulnerabilityID": "CVE-2024-21907",
+            "PkgID": "Newtonsoft.Json/12.0.2",
+            "PkgName": "Newtonsoft.Json",
+            "PkgIdentifier": {
+              "PURL": "pkg:nuget/Newtonsoft.Json@12.0.2",
+              "UID": "d75730951b355c27"
+            },
+            "InstalledVersion": "12.0.2",
+            "FixedVersion": "13.0.1",
+            "Status": "fixed",
+            "SeveritySource": "ghsa",
+            "PrimaryURL": "https://avd.aquasec.com/nvd/cve-2024-21907",
+            "DataSource": {
+              "ID": "ghsa",
+              "Name": "GitHub Security Advisory NuGet",
+              "URL": "https://github.com/advisories?query=type%3Areviewed+ecosystem%3Anuget"
+            },
+            "Title": "Improper Handling of Exceptional Conditions in Newtonsoft.Json",
+            "Description": "Newtonsoft.Json before version 13.0.1 is affected by a mishandling of exceptional conditions vulnerability. Crafted data that is passed to the JsonConvert.DeserializeObject method may trigger a StackOverflow exception resulting in denial of service. Depending on the usage of the library, an unauthenticated and remote attacker may be able to cause the denial of service condition.\n",
+            "Severity": "HIGH",
+            "CweIDs": [
+              "CWE-755"
+            ],
+            "VendorSeverity": {
+              "ghsa": 3,
+              "nvd": 3
+            },
+            "CVSS": {
+              "ghsa": {
+                "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+                "V3Score": 7.5
+              },
+              "nvd": {
+                "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+                "V3Score": 7.5
+              }
+            },
+            "References": [
+              "https://alephsecurity.com/2018/10/22/StackOverflowException",
+              "https://alephsecurity.com/2018/10/22/StackOverflowException/",
+              "https://alephsecurity.com/vulns/aleph-2018004",
+              "https://github.com/JamesNK/Newtonsoft.Json",
+              "https://github.com/JamesNK/Newtonsoft.Json/commit/7e77bbe1beccceac4fc7b174b53abfefac278b66",
+              "https://github.com/JamesNK/Newtonsoft.Json/issues/2457",
+              "https://github.com/JamesNK/Newtonsoft.Json/pull/2462",
+              "https://github.com/advisories/GHSA-5crp-9r3c-p9vr",
+              "https://security.snyk.io/vuln/SNYK-DOTNET-NEWTONSOFTJSON-2774678",
+              "https://vulncheck.com/advisories/vc-advisory-GHSA-5crp-9r3c-p9vr"
+            ],
+            "PublishedDate": "2024-01-03T16:15:08.793Z",
+            "LastModifiedDate": "2024-11-21T08:55:14.583Z"
+          }
+        ]
+      },
+      {
+        "Target": "node_modules/nswag/bin/binaries/Net60/dotnet-nswag.deps.json",
+        "Class": "lang-pkgs",
+        "Type": "dotnet-core"
+      },
+      {
+        "Target": "node_modules/nswag/bin/binaries/NetCore21/dotnet-nswag.deps.json",
+        "Class": "lang-pkgs",
+        "Type": "dotnet-core",
+        "Vulnerabilities": [
+          {
+            "VulnerabilityID": "CVE-2020-1045",
+            "PkgID": "Microsoft.AspNetCore.Http/2.1.1",
+            "PkgName": "Microsoft.AspNetCore.Http",
+            "PkgIdentifier": {
+              "PURL": "pkg:nuget/Microsoft.AspNetCore.Http@2.1.1",
+              "UID": "4191285966354485"
+            },
+            "InstalledVersion": "2.1.1",
+            "FixedVersion": "2.1.22",
+            "Status": "fixed",
+            "SeveritySource": "ghsa",
+            "PrimaryURL": "https://avd.aquasec.com/nvd/cve-2020-1045",
+            "DataSource": {
+              "ID": "ghsa",
+              "Name": "GitHub Security Advisory NuGet",
+              "URL": "https://github.com/advisories?query=type%3Areviewed+ecosystem%3Anuget"
+            },
+            "Title": "dotnet: ASP.NET cookie prefix spoofing vulnerability",
+            "Description": "\u003cp\u003eA security feature bypass vulnerability exists in the way Microsoft ASP.NET Core parses encoded cookie names.\u003c/p\u003e\n\u003cp\u003eThe ASP.NET Core cookie parser decodes entire cookie strings which could allow a malicious attacker to set a second cookie with the name being percent encoded.\u003c/p\u003e\n\u003cp\u003eThe security update addresses the vulnerability by fixing the way the ASP.NET Core cookie parser handles encoded names.\u003c/p\u003e\n",
+            "Severity": "HIGH",
+            "VendorSeverity": {
+              "bitnami": 3,
+              "ghsa": 3,
+              "nvd": 3,
+              "oracle-oval": 3,
+              "photon": 3,
+              "redhat": 3
+            },
+            "CVSS": {
+              "bitnami": {
+                "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:H/A:N",
+                "V3Score": 7.5
+              },
+              "ghsa": {
+                "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:H/A:N",
+                "V3Score": 7.5
+              },
+              "nvd": {
+                "V2Vector": "AV:N/AC:L/Au:N/C:N/I:P/A:N",
+                "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:H/A:N",
+                "V2Score": 5,
+                "V3Score": 7.5
+              },
+              "redhat": {
+                "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:H/A:N",
+                "V3Score": 7.5
+              }
+            },
+            "References": [
+              "https://access.redhat.com/errata/RHSA-2020:3699",
+              "https://access.redhat.com/security/cve/CVE-2020-1045",
+              "https://github.com/dotnet/announcements/issues/165",
+              "https://github.com/dotnet/aspnetcore/issues/23578",
+              "https://github.com/dotnet/aspnetcore/issues/25701",
+              "https://github.com/dotnet/aspnetcore/issues/25701#issuecomment-689434477",
+              "https://github.com/dotnet/aspnetcore/pull/24264",
+              "https://github.com/dotnet/core/blob/main/release-notes/3.1/3.1.8/3.1.8.md#changes-in-318",
+              "https://github.com/github/advisory-database/issues/302",
+              "https://linux.oracle.com/cve/CVE-2020-1045.html",
+              "https://linux.oracle.com/errata/ELSA-2020-3699.html",
+              "https://lists.fedoraproject.org/archives/list/package-announce%40lists.fedoraproject.org/message/5LN2FUVBSVPGK7AU3NMLO3YR6CGONQPB",
+              "https://lists.fedoraproject.org/archives/list/package-announce%40lists.fedoraproject.org/message/5LN2FUVBSVPGK7AU3NMLO3YR6CGONQPB/",
+              "https://lists.fedoraproject.org/archives/list/package-announce%40lists.fedoraproject.org/message/ASICXQXS4M7MTAF6SGQMCLCA63DLCUT3",
+              "https://lists.fedoraproject.org/archives/list/package-announce%40lists.fedoraproject.org/message/ASICXQXS4M7MTAF6SGQMCLCA63DLCUT3/",
+              "https://lists.fedoraproject.org/archives/list/package-announce@lists.fedoraproject.org/message/5LN2FUVBSVPGK7AU3NMLO3YR6CGONQPB",
+              "https://lists.fedoraproject.org/archives/list/package-announce@lists.fedoraproject.org/message/ASICXQXS4M7MTAF6SGQMCLCA63DLCUT3",
+              "https://nvd.nist.gov/vuln/detail/CVE-2020-1045",
+              "https://portal.msrc.microsoft.com/en-US/security-guidance/advisory/CVE-2020-1045",
+              "https://security.snyk.io/vuln/SNYK-RHEL8-DOTNET-1439600",
+              "https://www.cve.org/CVERecord?id=CVE-2020-1045"
+            ],
+            "PublishedDate": "2020-09-11T17:15:18.307Z",
+            "LastModifiedDate": "2024-11-21T05:09:37.813Z"
+          },
+          {
+            "VulnerabilityID": "CVE-2019-0564",
+            "PkgID": "Microsoft.AspNetCore.Server.Kestrel.Core/2.1.3",
+            "PkgName": "Microsoft.AspNetCore.Server.Kestrel.Core",
+            "PkgIdentifier": {
+              "PURL": "pkg:nuget/Microsoft.AspNetCore.Server.Kestrel.Core@2.1.3",
+              "UID": "31392331f9b64740"
+            },
+            "InstalledVersion": "2.1.3",
+            "FixedVersion": "2.1.7",
+            "Status": "fixed",
+            "SeveritySource": "ghsa",
+            "PrimaryURL": "https://avd.aquasec.com/nvd/cve-2019-0564",
+            "DataSource": {
+              "ID": "ghsa",
+              "Name": "GitHub Security Advisory NuGet",
+              "URL": "https://github.com/advisories?query=type%3Areviewed+ecosystem%3Anuget"
+            },
+            "Title": "Core: Kestrel - WebSocket DoS via CancellationToken (CoreFX and ASP.NET)",
+            "Description": "A denial of service vulnerability exists when ASP.NET Core improperly handles web requests, aka \"ASP.NET Core Denial of Service Vulnerability.\" This affects ASP.NET Core 2.1. This CVE ID is unique from CVE-2019-0548.",
+            "Severity": "HIGH",
+            "CweIDs": [
+              "CWE-19"
+            ],
+            "VendorSeverity": {
+              "ghsa": 3,
+              "nvd": 3,
+              "photon": 3,
+              "redhat": 2
+            },
+            "CVSS": {
+              "ghsa": {
+                "V3Vector": "CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+                "V3Score": 7.5
+              },
+              "nvd": {
+                "V2Vector": "AV:N/AC:L/Au:N/C:N/I:N/A:P",
+                "V3Vector": "CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+                "V2Score": 5,
+                "V3Score": 7.5
+              },
+              "redhat": {
+                "V3Vector": "CVSS:3.0/AV:N/AC:H/PR:N/UI:N/S:U/C:N/I:N/A:H",
+                "V3Score": 5.9
+              }
+            },
+            "References": [
+              "http://www.securityfocus.com/bid/106413",
+              "https://access.redhat.com/errata/RHSA-2019:0040",
+              "https://access.redhat.com/security/cve/CVE-2019-0564",
+              "https://github.com/aspnet/Announcements/issues/334",
+              "https://github.com/github/advisory-database/issues/302",
+              "https://nvd.nist.gov/vuln/detail/CVE-2019-0564",
+              "https://portal.msrc.microsoft.com/en-US/security-guidance/advisory/CVE-2019-0564",
+              "https://www.cve.org/CVERecord?id=CVE-2019-0564"
+            ],
+            "PublishedDate": "2019-01-08T21:29:01.317Z",
+            "LastModifiedDate": "2024-11-21T04:16:51.857Z"
+          },
+          {
+            "VulnerabilityID": "CVE-2021-1723",
+            "PkgID": "Microsoft.AspNetCore.Server.Kestrel.Core/2.1.3",
+            "PkgName": "Microsoft.AspNetCore.Server.Kestrel.Core",
+            "PkgIdentifier": {
+              "PURL": "pkg:nuget/Microsoft.AspNetCore.Server.Kestrel.Core@2.1.3",
+              "UID": "31392331f9b64740"
+            },
+            "InstalledVersion": "2.1.3",
+            "FixedVersion": "2.1.25",
+            "Status": "fixed",
+            "SeveritySource": "ghsa",
+            "PrimaryURL": "https://avd.aquasec.com/nvd/cve-2021-1723",
+            "DataSource": {
+              "ID": "ghsa",
+              "Name": "GitHub Security Advisory NuGet",
+              "URL": "https://github.com/advisories?query=type%3Areviewed+ecosystem%3Anuget"
+            },
+            "Title": "dotnet: ASP.NET Core Callbacks outside of locks cause Krestel deadlock when using HTTP2",
+            "Description": "ASP.NET Core and Visual Studio Denial of Service Vulnerability",
+            "Severity": "HIGH",
+            "VendorSeverity": {
+              "bitnami": 3,
+              "ghsa": 3,
+              "nvd": 3,
+              "oracle-oval": 3,
+              "redhat": 3
+            },
+            "CVSS": {
+              "bitnami": {
+                "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+                "V3Score": 7.5
+              },
+              "ghsa": {
+                "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+                "V3Score": 7.5
+              },
+              "nvd": {
+                "V2Vector": "AV:N/AC:L/Au:N/C:N/I:N/A:P",
+                "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+                "V2Score": 5,
+                "V3Score": 7.5
+              },
+              "redhat": {
+                "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+                "V3Score": 7.5
+              }
+            },
+            "References": [
+              "https://access.redhat.com/security/cve/CVE-2021-1723",
+              "https://github.com/dotnet/announcements/issues/170",
+              "https://linux.oracle.com/cve/CVE-2021-1723.html",
+              "https://linux.oracle.com/errata/ELSA-2021-0095.html",
+              "https://lists.fedoraproject.org/archives/list/package-announce@lists.fedoraproject.org/message/3L27CGRVEWUPELNJOGTCW6GLEDBECB4B",
+              "https://lists.fedoraproject.org/archives/list/package-announce@lists.fedoraproject.org/message/RRXHERXW4KR5WCP76UDW5PC7GX3YQLUW",
+              "https://msrc.microsoft.com/update-guide/en-US/vulnerability/CVE-2021-1723",
+              "https://msrc.microsoft.com/update-guide/vulnerability/CVE-2021-1723",
+              "https://nvd.nist.gov/vuln/detail/CVE-2021-1723",
+              "https://portal.msrc.microsoft.com/en-US/security-guidance/advisory/CVE-2021-1723",
+              "https://www.cve.org/CVERecord?id=CVE-2021-1723"
+            ],
+            "PublishedDate": "2021-01-12T20:15:34.993Z",
+            "LastModifiedDate": "2024-11-21T05:44:58.59Z"
+          },
+          {
+            "VulnerabilityID": "CVE-2023-38180",
+            "PkgID": "Microsoft.AspNetCore.Server.Kestrel.Transport.Sockets/2.1.3",
+            "PkgName": "Microsoft.AspNetCore.Server.Kestrel.Transport.Sockets",
+            "PkgIdentifier": {
+              "PURL": "pkg:nuget/Microsoft.AspNetCore.Server.Kestrel.Transport.Sockets@2.1.3",
+              "UID": "3015e9ceab280e2b"
+            },
+            "InstalledVersion": "2.1.3",
+            "FixedVersion": "2.1.40",
+            "Status": "fixed",
+            "SeveritySource": "ghsa",
+            "PrimaryURL": "https://avd.aquasec.com/nvd/cve-2023-38180",
+            "DataSource": {
+              "ID": "ghsa",
+              "Name": "GitHub Security Advisory NuGet",
+              "URL": "https://github.com/advisories?query=type%3Areviewed+ecosystem%3Anuget"
+            },
+            "Title": "dotnet: Kestrel vulnerability to slow read attacks leading to Denial of Service attack",
+            "Description": ".NET and Visual Studio Denial of Service Vulnerability",
+            "Severity": "HIGH",
+            "CweIDs": [
+              "CWE-400"
+            ],
+            "VendorSeverity": {
+              "alma": 3,
+              "amazon": 3,
+              "bitnami": 3,
+              "ghsa": 3,
+              "oracle-oval": 3,
+              "photon": 3,
+              "redhat": 3,
+              "rocky": 3,
+              "ubuntu": 2
+            },
+            "CVSS": {
+              "bitnami": {
+                "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+                "V3Score": 7.5
+              },
+              "ghsa": {
+                "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+                "V3Score": 7.5
+              },
+              "redhat": {
+                "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+                "V3Score": 7.5
+              }
+            },
+            "References": [
+              "https://access.redhat.com/errata/RHSA-2023:4645",
+              "https://access.redhat.com/security/cve/CVE-2023-38180",
+              "https://bugzilla.redhat.com/2228621",
+              "https://bugzilla.redhat.com/2228622",
+              "https://bugzilla.redhat.com/show_bug.cgi?id=2228621",
+              "https://bugzilla.redhat.com/show_bug.cgi?id=2228622",
+              "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2023-35390",
+              "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2023-38180",
+              "https://devblogs.microsoft.com/dotnet/august-2023-updates/",
+              "https://errata.almalinux.org/8/ALSA-2023-4645.html",
+              "https://errata.rockylinux.org/RLSA-2023:4645",
+              "https://github.com/advisories/GHSA-vmch-3w2x-vhgq",
+              "https://github.com/dotnet/announcements/issues/269",
+              "https://github.com/dotnet/runtime",
+              "https://github.com/dotnet/runtime/issues/90170",
+              "https://github.com/dotnet/runtime/security/advisories/GHSA-vmch-3w2x-vhgq",
+              "https://linux.oracle.com/cve/CVE-2023-38180.html",
+              "https://linux.oracle.com/errata/ELSA-2023-4645.html",
+              "https://lists.fedoraproject.org/archives/list/package-announce@lists.fedoraproject.org/message/CL2L4WE5QRT7WEXANYXSKSU43APC5N2V",
+              "https://lists.fedoraproject.org/archives/list/package-announce@lists.fedoraproject.org/message/CL2L4WE5QRT7WEXANYXSKSU43APC5N2V/",
+              "https://lists.fedoraproject.org/archives/list/package-announce@lists.fedoraproject.org/message/NWVZFKTLNMNKPZ755EMRYIA6GHFOWGKY",
+              "https://lists.fedoraproject.org/archives/list/package-announce@lists.fedoraproject.org/message/NWVZFKTLNMNKPZ755EMRYIA6GHFOWGKY/",
+              "https://msrc.microsoft.com/update-guide/vulnerability/CVE-2023-38180",
+              "https://nvd.nist.gov/vuln/detail/CVE-2023-38180",
+              "https://ubuntu.com/security/notices/USN-6278-1",
+              "https://ubuntu.com/security/notices/USN-6278-2",
+              "https://www.cisa.gov/known-exploited-vulnerabilities-catalog",
+              "https://www.cve.org/CVERecord?id=CVE-2023-38180"
+            ],
+            "PublishedDate": "2023-08-08T19:15:10.367Z",
+            "LastModifiedDate": "2025-03-10T20:30:38.527Z"
+          },
+          {
+            "VulnerabilityID": "CVE-2024-21907",
+            "PkgID": "Newtonsoft.Json/11.0.2",
+            "PkgName": "Newtonsoft.Json",
+            "PkgIdentifier": {
+              "PURL": "pkg:nuget/Newtonsoft.Json@11.0.2",
+              "UID": "dd320a0c5625578a"
+            },
+            "InstalledVersion": "11.0.2",
+            "FixedVersion": "13.0.1",
+            "Status": "fixed",
+            "SeveritySource": "ghsa",
+            "PrimaryURL": "https://avd.aquasec.com/nvd/cve-2024-21907",
+            "DataSource": {
+              "ID": "ghsa",
+              "Name": "GitHub Security Advisory NuGet",
+              "URL": "https://github.com/advisories?query=type%3Areviewed+ecosystem%3Anuget"
+            },
+            "Title": "Improper Handling of Exceptional Conditions in Newtonsoft.Json",
+            "Description": "Newtonsoft.Json before version 13.0.1 is affected by a mishandling of exceptional conditions vulnerability. Crafted data that is passed to the JsonConvert.DeserializeObject method may trigger a StackOverflow exception resulting in denial of service. Depending on the usage of the library, an unauthenticated and remote attacker may be able to cause the denial of service condition.\n",
+            "Severity": "HIGH",
+            "CweIDs": [
+              "CWE-755"
+            ],
+            "VendorSeverity": {
+              "ghsa": 3,
+              "nvd": 3
+            },
+            "CVSS": {
+              "ghsa": {
+                "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+                "V3Score": 7.5
+              },
+              "nvd": {
+                "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+                "V3Score": 7.5
+              }
+            },
+            "References": [
+              "https://alephsecurity.com/2018/10/22/StackOverflowException",
+              "https://alephsecurity.com/2018/10/22/StackOverflowException/",
+              "https://alephsecurity.com/vulns/aleph-2018004",
+              "https://github.com/JamesNK/Newtonsoft.Json",
+              "https://github.com/JamesNK/Newtonsoft.Json/commit/7e77bbe1beccceac4fc7b174b53abfefac278b66",
+              "https://github.com/JamesNK/Newtonsoft.Json/issues/2457",
+              "https://github.com/JamesNK/Newtonsoft.Json/pull/2462",
+              "https://github.com/advisories/GHSA-5crp-9r3c-p9vr",
+              "https://security.snyk.io/vuln/SNYK-DOTNET-NEWTONSOFTJSON-2774678",
+              "https://vulncheck.com/advisories/vc-advisory-GHSA-5crp-9r3c-p9vr"
+            ],
+            "PublishedDate": "2024-01-03T16:15:08.793Z",
+            "LastModifiedDate": "2024-11-21T08:55:14.583Z"
+          }
+        ]
+      },
+      {
+        "Target": "node_modules/nswag/bin/binaries/NetCore31/dotnet-nswag.deps.json",
+        "Class": "lang-pkgs",
+        "Type": "dotnet-core",
+        "Vulnerabilities": [
+          {
+            "VulnerabilityID": "CVE-2024-21907",
+            "PkgID": "Newtonsoft.Json/12.0.2",
+            "PkgName": "Newtonsoft.Json",
+            "PkgIdentifier": {
+              "PURL": "pkg:nuget/Newtonsoft.Json@12.0.2",
+              "UID": "1f0b2ff72a8500a4"
+            },
+            "InstalledVersion": "12.0.2",
+            "FixedVersion": "13.0.1",
+            "Status": "fixed",
+            "SeveritySource": "ghsa",
+            "PrimaryURL": "https://avd.aquasec.com/nvd/cve-2024-21907",
+            "DataSource": {
+              "ID": "ghsa",
+              "Name": "GitHub Security Advisory NuGet",
+              "URL": "https://github.com/advisories?query=type%3Areviewed+ecosystem%3Anuget"
+            },
+            "Title": "Improper Handling of Exceptional Conditions in Newtonsoft.Json",
+            "Description": "Newtonsoft.Json before version 13.0.1 is affected by a mishandling of exceptional conditions vulnerability. Crafted data that is passed to the JsonConvert.DeserializeObject method may trigger a StackOverflow exception resulting in denial of service. Depending on the usage of the library, an unauthenticated and remote attacker may be able to cause the denial of service condition.\n",
+            "Severity": "HIGH",
+            "CweIDs": [
+              "CWE-755"
+            ],
+            "VendorSeverity": {
+              "ghsa": 3,
+              "nvd": 3
+            },
+            "CVSS": {
+              "ghsa": {
+                "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+                "V3Score": 7.5
+              },
+              "nvd": {
+                "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+                "V3Score": 7.5
+              }
+            },
+            "References": [
+              "https://alephsecurity.com/2018/10/22/StackOverflowException",
+              "https://alephsecurity.com/2018/10/22/StackOverflowException/",
+              "https://alephsecurity.com/vulns/aleph-2018004",
+              "https://github.com/JamesNK/Newtonsoft.Json",
+              "https://github.com/JamesNK/Newtonsoft.Json/commit/7e77bbe1beccceac4fc7b174b53abfefac278b66",
+              "https://github.com/JamesNK/Newtonsoft.Json/issues/2457",
+              "https://github.com/JamesNK/Newtonsoft.Json/pull/2462",
+              "https://github.com/advisories/GHSA-5crp-9r3c-p9vr",
+              "https://security.snyk.io/vuln/SNYK-DOTNET-NEWTONSOFTJSON-2774678",
+              "https://vulncheck.com/advisories/vc-advisory-GHSA-5crp-9r3c-p9vr"
+            ],
+            "PublishedDate": "2024-01-03T16:15:08.793Z",
+            "LastModifiedDate": "2024-11-21T08:55:14.583Z"
+          }
+        ]
+      },
+      {
+        "Target": "package-lock.json",
+        "Class": "lang-pkgs",
+        "Type": "npm",
+        "Vulnerabilities": [
+          {
+            "VulnerabilityID": "CVE-2023-46233",
+            "PkgID": "crypto-js@4.1.1",
+            "PkgName": "crypto-js",
+            "PkgIdentifier": {
+              "PURL": "pkg:npm/crypto-js@4.1.1",
+              "UID": "4e62471142fe7b78"
+            },
+            "InstalledVersion": "4.1.1",
+            "FixedVersion": "4.2.0",
+            "Status": "fixed",
+            "SeveritySource": "ghsa",
+            "PrimaryURL": "https://avd.aquasec.com/nvd/cve-2023-46233",
+            "DataSource": {
+              "ID": "ghsa",
+              "Name": "GitHub Security Advisory npm",
+              "URL": "https://github.com/advisories?query=type%3Areviewed+ecosystem%3Anpm"
+            },
+            "Title": "crypto-js: PBKDF2 1,000 times weaker than specified in 1993 and 1.3M times weaker than current standard",
+            "Description": "crypto-js is a JavaScript library of crypto standards. Prior to version 4.2.0, crypto-js PBKDF2 is 1,000 times weaker than originally specified in 1993, and at least 1,300,000 times weaker than current industry standard. This is because it both defaults to SHA1, a cryptographic hash algorithm considered insecure since at least 2005, and defaults to one single iteration, a 'strength' or 'difficulty' value specified at 1,000 when specified in 1993. PBKDF2 relies on iteration count as a countermeasure to preimage and collision attacks. If used to protect passwords, the impact is high. If used to generate signatures, the impact is high. Version 4.2.0 contains a patch for this issue. As a workaround, configure crypto-js to use SHA256 with at least 250,000 iterations.",
+            "Severity": "CRITICAL",
+            "CweIDs": [
+              "CWE-328",
+              "CWE-916",
+              "CWE-327"
+            ],
+            "VendorSeverity": {
+              "ghsa": 4,
+              "nvd": 4,
+              "redhat": 3,
+              "ubuntu": 2
+            },
+            "CVSS": {
+              "ghsa": {
+                "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:N",
+                "V3Score": 9.1
+              },
+              "nvd": {
+                "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:N",
+                "V3Score": 9.1
+              },
+              "redhat": {
+                "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:N",
+                "V3Score": 9.1
+              }
+            },
+            "References": [
+              "https://access.redhat.com/security/cve/CVE-2023-46233",
+              "https://github.com/brix/crypto-js",
+              "https://github.com/brix/crypto-js/commit/421dd538b2d34e7c24a5b72cc64dc2b9167db40a",
+              "https://github.com/brix/crypto-js/security/advisories/GHSA-xwcq-pm8m-c4vf",
+              "https://lists.debian.org/debian-lts-announce/2023/11/msg00025.html",
+              "https://nvd.nist.gov/vuln/detail/CVE-2023-46233",
+              "https://ubuntu.com/security/notices/USN-6753-1",
+              "https://www.cve.org/CVERecord?id=CVE-2023-46233"
+            ],
+            "PublishedDate": "2023-10-25T21:15:10.307Z",
+            "LastModifiedDate": "2024-11-21T08:28:07.867Z"
+          },
+          {
+            "VulnerabilityID": "CVE-2025-26791",
+            "PkgID": "dompurify@2.5.8",
+            "PkgName": "dompurify",
+            "PkgIdentifier": {
+              "PURL": "pkg:npm/dompurify@2.5.8",
+              "UID": "2d6a56511fb3f46d"
+            },
+            "InstalledVersion": "2.5.8",
+            "FixedVersion": "3.2.4",
+            "Status": "fixed",
+            "SeveritySource": "ghsa",
+            "PrimaryURL": "https://avd.aquasec.com/nvd/cve-2025-26791",
+            "DataSource": {
+              "ID": "ghsa",
+              "Name": "GitHub Security Advisory npm",
+              "URL": "https://github.com/advisories?query=type%3Areviewed+ecosystem%3Anpm"
+            },
+            "Title": "dompurify: Mutation XSS in DOMPurify Due to Improper Template Literal Handling",
+            "Description": "DOMPurify before 3.2.4 has an incorrect template literal regular expression, sometimes leading to mutation cross-site scripting (mXSS).",
+            "Severity": "MEDIUM",
+            "CweIDs": [
+              "CWE-79"
+            ],
+            "VendorSeverity": {
+              "ghsa": 2,
+              "redhat": 2
+            },
+            "CVSS": {
+              "ghsa": {
+                "V3Vector": "CVSS:3.1/AV:L/AC:H/PR:N/UI:N/S:C/C:L/I:L/A:N",
+                "V3Score": 4.5
+              },
+              "redhat": {
+                "V3Vector": "CVSS:3.1/AV:L/AC:H/PR:N/UI:N/S:C/C:L/I:L/A:N",
+                "V3Score": 4.5
+              }
+            },
+            "References": [
+              "https://access.redhat.com/security/cve/CVE-2025-26791",
+              "https://ensy.zip/posts/dompurify-323-bypass",
+              "https://ensy.zip/posts/dompurify-323-bypass/",
+              "https://github.com/cure53/DOMPurify",
+              "https://github.com/cure53/DOMPurify/commit/d18ffcb554e0001748865da03ac75dd7829f0f02",
+              "https://github.com/cure53/DOMPurify/releases/tag/3.2.4",
+              "https://nsysean.github.io/posts/dompurify-323-bypass",
+              "https://nsysean.github.io/posts/dompurify-323-bypass/",
+              "https://nvd.nist.gov/vuln/detail/CVE-2025-26791",
+              "https://www.cve.org/CVERecord?id=CVE-2025-26791"
+            ],
+            "PublishedDate": "2025-02-14T09:15:08.067Z",
+            "LastModifiedDate": "2025-02-14T16:15:37.35Z"
+          },
+          {
+            "VulnerabilityID": "CVE-2021-23413",
+            "PkgID": "jszip@3.4.0",
+            "PkgName": "jszip",
+            "PkgIdentifier": {
+              "PURL": "pkg:npm/jszip@3.4.0",
+              "UID": "4731b9a239625d1a"
+            },
+            "InstalledVersion": "3.4.0",
+            "FixedVersion": "3.7.0, 2.7.0",
+            "Status": "fixed",
+            "SeveritySource": "ghsa",
+            "PrimaryURL": "https://avd.aquasec.com/nvd/cve-2021-23413",
+            "DataSource": {
+              "ID": "ghsa",
+              "Name": "GitHub Security Advisory npm",
+              "URL": "https://github.com/advisories?query=type%3Areviewed+ecosystem%3Anpm"
+            },
+            "Title": "jszip: crafting a new zip file with filenames set to object prototype values results in a returned object with a modified prototype instance",
+            "Description": "This affects the package jszip before 3.7.0. Crafting a new zip file with filenames set to Object prototype values (e.g __proto__, toString, etc) results in a returned object with a modified prototype instance.",
+            "Severity": "MEDIUM",
+            "VendorSeverity": {
+              "ghsa": 2,
+              "nvd": 2,
+              "redhat": 2
+            },
+            "CVSS": {
+              "ghsa": {
+                "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:L",
+                "V3Score": 5.3
+              },
+              "nvd": {
+                "V2Vector": "AV:N/AC:L/Au:N/C:N/I:N/A:P",
+                "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:L",
+                "V2Score": 5,
+                "V3Score": 5.3
+              },
+              "redhat": {
+                "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:L",
+                "V3Score": 5.3
+              }
+            },
+            "References": [
+              "https://access.redhat.com/security/cve/CVE-2021-23413",
+              "https://github.com/Stuk/jszip",
+              "https://github.com/Stuk/jszip/blob/master/lib/object.js%23L88",
+              "https://github.com/Stuk/jszip/commit/22357494f424178cb416cdb7d93b26dd4f824b36",
+              "https://github.com/Stuk/jszip/pull/766",
+              "https://nvd.nist.gov/vuln/detail/CVE-2021-23413",
+              "https://snyk.io/vuln/SNYK-JAVA-ORGWEBJARS-1251499",
+              "https://snyk.io/vuln/SNYK-JAVA-ORGWEBJARSNPM-1251498",
+              "https://snyk.io/vuln/SNYK-JS-JSZIP-1251497",
+              "https://www.cve.org/CVERecord?id=CVE-2021-23413"
+            ],
+            "PublishedDate": "2021-07-25T13:15:07.39Z",
+            "LastModifiedDate": "2024-11-21T05:51:40.3Z"
+          },
+          {
+            "VulnerabilityID": "CVE-2022-48285",
+            "PkgID": "jszip@3.4.0",
+            "PkgName": "jszip",
+            "PkgIdentifier": {
+              "PURL": "pkg:npm/jszip@3.4.0",
+              "UID": "4731b9a239625d1a"
+            },
+            "InstalledVersion": "3.4.0",
+            "FixedVersion": "3.8.0",
+            "Status": "fixed",
+            "SeveritySource": "ghsa",
+            "PrimaryURL": "https://avd.aquasec.com/nvd/cve-2022-48285",
+            "DataSource": {
+              "ID": "ghsa",
+              "Name": "GitHub Security Advisory npm",
+              "URL": "https://github.com/advisories?query=type%3Areviewed+ecosystem%3Anpm"
+            },
+            "Title": "jszip: directory traversal via a crafted ZIP archive",
+            "Description": "loadAsync in JSZip before 3.8.0 allows Directory Traversal via a crafted ZIP archive.",
+            "Severity": "MEDIUM",
+            "CweIDs": [
+              "CWE-22"
+            ],
+            "VendorSeverity": {
+              "azure": 3,
+              "cbl-mariner": 3,
+              "ghsa": 2,
+              "nvd": 3,
+              "redhat": 2
+            },
+            "CVSS": {
+              "ghsa": {
+                "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:L/A:L",
+                "V3Score": 7.3
+              },
+              "nvd": {
+                "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:L/A:L",
+                "V3Score": 7.3
+              },
+              "redhat": {
+                "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:L/A:L",
+                "V3Score": 7.3
+              }
+            },
+            "References": [
+              "https://access.redhat.com/security/cve/CVE-2022-48285",
+              "https://exchange.xforce.ibmcloud.com/vulnerabilities/244499",
+              "https://github.com/Stuk/jszip",
+              "https://github.com/Stuk/jszip/commit/2edab366119c9ee948357c02f1206c28566cdf15",
+              "https://github.com/Stuk/jszip/compare/v3.7.1...v3.8.0",
+              "https://nvd.nist.gov/vuln/detail/CVE-2022-48285",
+              "https://security.netapp.com/advisory/ntap-20240621-0005",
+              "https://security.netapp.com/advisory/ntap-20240621-0005/",
+              "https://www.cve.org/CVERecord?id=CVE-2022-48285",
+              "https://www.mend.io/vulnerability-database/WS-2023-0004"
+            ],
+            "PublishedDate": "2023-01-29T05:15:10.07Z",
+            "LastModifiedDate": "2024-11-21T07:33:05.22Z"
+          },
+          {
+            "VulnerabilityID": "CVE-2022-31129",
+            "PkgID": "moment@2.29.3",
+            "PkgName": "moment",
+            "PkgIdentifier": {
+              "PURL": "pkg:npm/moment@2.29.3",
+              "UID": "5fe4ad9494417717"
+            },
+            "InstalledVersion": "2.29.3",
+            "FixedVersion": "2.29.4",
+            "Status": "fixed",
+            "SeveritySource": "ghsa",
+            "PrimaryURL": "https://avd.aquasec.com/nvd/cve-2022-31129",
+            "DataSource": {
+              "ID": "ghsa",
+              "Name": "GitHub Security Advisory npm",
+              "URL": "https://github.com/advisories?query=type%3Areviewed+ecosystem%3Anpm"
+            },
+            "Title": "moment: inefficient parsing algorithm resulting in DoS",
+            "Description": "moment is a JavaScript date library for parsing, validating, manipulating, and formatting dates. Affected versions of moment were found to use an inefficient parsing algorithm. Specifically using string-to-date parsing in moment (more specifically rfc2822 parsing, which is tried by default) has quadratic (N^2) complexity on specific inputs. Users may notice a noticeable slowdown is observed with inputs above 10k characters. Users who pass user-provided strings without sanity length checks to moment constructor are vulnerable to (Re)DoS attacks. The problem is patched in 2.29.4, the patch can be applied to all affected versions with minimal tweaking. Users are advised to upgrade. Users unable to upgrade should consider limiting date lengths accepted from user input.",
+            "Severity": "HIGH",
+            "CweIDs": [
+              "CWE-400",
+              "CWE-1333"
+            ],
+            "VendorSeverity": {
+              "ghsa": 3,
+              "nvd": 3,
+              "redhat": 3,
+              "ubuntu": 2
+            },
+            "CVSS": {
+              "ghsa": {
+                "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+                "V3Score": 7.5
+              },
+              "nvd": {
+                "V2Vector": "AV:N/AC:L/Au:N/C:N/I:N/A:P",
+                "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+                "V2Score": 5,
+                "V3Score": 7.5
+              },
+              "redhat": {
+                "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+                "V3Score": 7.5
+              }
+            },
+            "References": [
+              "https://access.redhat.com/security/cve/CVE-2022-31129",
+              "https://github.com/moment/moment",
+              "https://github.com/moment/moment/commit/9a3b5894f3d5d602948ac8a02e4ee528a49ca3a3",
+              "https://github.com/moment/moment/pull/6015#issuecomment-1152961973",
+              "https://github.com/moment/moment/pull/6015/commits/4bbb9f3ccbe231de40207503f344fe5ce97584f4",
+              "https://github.com/moment/moment/pull/6015/commits/bfd4f2375d5c1a2106246721d693a9611dddfbfe",
+              "https://github.com/moment/moment/pull/6015/commits/dc0d180e90d8a84f7ff13572363330a22b3ea504",
+              "https://github.com/moment/moment/security/advisories/GHSA-wc69-rhjr-hc9g",
+              "https://huntr.dev/bounties/f0952b67-f2ff-44a9-a9cd-99e0a87cb633",
+              "https://huntr.dev/bounties/f0952b67-f2ff-44a9-a9cd-99e0a87cb633/",
+              "https://lists.debian.org/debian-lts-announce/2023/01/msg00035.html",
+              "https://lists.fedoraproject.org/archives/list/package-announce%40lists.fedoraproject.org/message/6QIO6YNLTK2T7SPKDS4JEL45FANLNC2Q/",
+              "https://lists.fedoraproject.org/archives/list/package-announce%40lists.fedoraproject.org/message/IWY24RJA3SBJGA5N4CU4VBPHJPPPJL5O/",
+              "https://lists.fedoraproject.org/archives/list/package-announce%40lists.fedoraproject.org/message/ORJX2LF6KMPIHP6B2P6KZIVKMLE3LVJ5/",
+              "https://lists.fedoraproject.org/archives/list/package-announce%40lists.fedoraproject.org/message/ZMX5YHELQVCGKKQVFXIYOTBMN23YYSRO/",
+              "https://lists.fedoraproject.org/archives/list/package-announce@lists.fedoraproject.org/message/6QIO6YNLTK2T7SPKDS4JEL45FANLNC2Q",
+              "https://lists.fedoraproject.org/archives/list/package-announce@lists.fedoraproject.org/message/IWY24RJA3SBJGA5N4CU4VBPHJPPPJL5O",
+              "https://lists.fedoraproject.org/archives/list/package-announce@lists.fedoraproject.org/message/ORJX2LF6KMPIHP6B2P6KZIVKMLE3LVJ5",
+              "https://lists.fedoraproject.org/archives/list/package-announce@lists.fedoraproject.org/message/ZMX5YHELQVCGKKQVFXIYOTBMN23YYSRO",
+              "https://nvd.nist.gov/vuln/detail/CVE-2022-31129",
+              "https://security.netapp.com/advisory/ntap-20221014-0003",
+              "https://security.netapp.com/advisory/ntap-20221014-0003/",
+              "https://ubuntu.com/security/notices/USN-5559-1",
+              "https://ubuntu.com/security/notices/USN-6550-1",
+              "https://www.cve.org/CVERecord?id=CVE-2022-31129"
+            ],
+            "PublishedDate": "2022-07-06T18:15:19.57Z",
+            "LastModifiedDate": "2024-11-21T07:03:57.43Z"
+          },
+          {
+            "VulnerabilityID": "CVE-2021-3163",
+            "PkgID": "quill@1.3.7",
+            "PkgName": "quill",
+            "PkgIdentifier": {
+              "PURL": "pkg:npm/quill@1.3.7",
+              "UID": "e6c47a15661411"
+            },
+            "InstalledVersion": "1.3.7",
+            "Status": "affected",
+            "SeveritySource": "ghsa",
+            "PrimaryURL": "https://avd.aquasec.com/nvd/cve-2021-3163",
+            "DataSource": {
+              "ID": "ghsa",
+              "Name": "GitHub Security Advisory npm",
+              "URL": "https://github.com/advisories?query=type%3Areviewed+ecosystem%3Anpm"
+            },
+            "Title": "Cross-site Scripting in quill",
+            "Description": "A vulnerability in the HTML editor of Slab Quill 4.8.0 allows an attacker to execute arbitrary JavaScript by storing an XSS payload (a crafted onloadstart attribute of an IMG element) in a text field. Note: Researchers have claimed that this issue is not within the product itself, but is intended behavior in a web browser",
+            "Severity": "MEDIUM",
+            "CweIDs": [
+              "CWE-79"
+            ],
+            "VendorSeverity": {
+              "ghsa": 2,
+              "nvd": 2
+            },
+            "CVSS": {
+              "ghsa": {
+                "V3Vector": "CVSS:3.1/AV:N/AC:H/PR:L/UI:N/S:U/C:L/I:L/A:N",
+                "V3Score": 4.2
+              },
+              "nvd": {
+                "V2Vector": "AV:N/AC:M/Au:N/C:N/I:P/A:N",
+                "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:C/C:L/I:L/A:N",
+                "V2Score": 4.3,
+                "V3Score": 6.1
+              }
+            },
+            "References": [
+              "https://burninatorsec.blogspot.com/2021/04/cve-2021-3163-xss-slab-quill-js.html",
+              "https://github.com/quilljs/quill",
+              "https://github.com/quilljs/quill/issues/3273",
+              "https://github.com/quilljs/quill/issues/3359",
+              "https://github.com/quilljs/quill/issues/3364",
+              "https://nvd.nist.gov/vuln/detail/CVE-2021-3163",
+              "https://quilljs.com"
+            ],
+            "PublishedDate": "2021-04-12T21:15:14.34Z",
+            "LastModifiedDate": "2024-11-21T06:21:02.183Z"
+          }
+        ]
+      }
+    ]
+  }
+  
