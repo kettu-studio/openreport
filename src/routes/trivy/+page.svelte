@@ -1,0 +1,230 @@
+<script lang="ts">
+  import { Badge } from "$lib/components/ui/badge";
+  import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "$lib/components/ui/card";
+  import { Separator } from "$lib/components/ui/separator";
+  import { Tabs, TabsContent, TabsList, TabsTrigger } from "$lib/components/ui/tabs";
+  import { Alert, AlertDescription, AlertTitle } from "$lib/components/ui/alert";
+  import { buttonVariants } from "$lib/components/ui/button/button.svelte";
+
+  let { data } = $props<any>();
+
+  const severityToVariant = (severity: string) => {
+    const s = (severity || '').toUpperCase();
+    if (s === 'CRITICAL') return 'destructive';
+    if (s === 'HIGH') return 'destructive';
+    if (s === 'MEDIUM') return 'secondary';
+    if (s === 'LOW') return 'outline';
+    return 'outline';
+  };
+
+  const formatDate = (iso?: string) => iso ? new Date(iso).toLocaleString() : '';
+</script>
+
+<div class="mx-auto max-w-6xl p-6 space-y-6">
+  <div class="flex flex-wrap items-center justify-between gap-3">
+    <div>
+      <h1 class="text-2xl font-bold tracking-tight">Trivy Report</h1>
+      <p class="text-sm text-muted-foreground">Schema {data.schemaVersion} • {data.artifactType} • {data.artifactName}</p>
+      {#if data.metadata?.RepoURL}
+        <p class="text-xs text-muted-foreground">Repo: {data.metadata.RepoURL} @ {data.metadata.Branch} ({data.metadata.Commit.slice(0,7)})</p>
+      {/if}
+      <p class="text-xs text-muted-foreground">Generado: {formatDate(data.createdAt)}</p>
+    </div>
+    <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 w-full max-w-md sm:max-w-none sm:w-auto">
+      <div class={`rounded-md border p-3 ${data.typeTotals.vulnerabilities ? '' : 'opacity-50'}`}>
+        <div class="text-xs text-muted-foreground">Vulnerabilities</div>
+        <div class="mt-1 text-xl font-semibold text-destructive">{data.typeTotals.vulnerabilities}</div>
+      </div>
+      <div class={`rounded-md border p-3 ${data.typeTotals.secrets ? '' : 'opacity-50'}`}>
+        <div class="text-xs text-muted-foreground">Secrets</div>
+        <div class="mt-1 text-xl font-semibold">{data.typeTotals.secrets}</div>
+      </div>
+      <div class={`rounded-md border p-3 ${data.typeTotals.misconfigurations ? '' : 'opacity-50'}`}>
+        <div class="text-xs text-muted-foreground">Misconfigurations</div>
+        <div class="mt-1 text-xl font-semibold">{data.typeTotals.misconfigurations}</div>
+      </div>
+      <div class={`rounded-md border p-3 ${data.typeTotals.licenses ? '' : 'opacity-50'}`}>
+        <div class="text-xs text-muted-foreground">Licenses</div>
+        <div class="mt-1 text-xl font-semibold">{data.typeTotals.licenses}</div>
+      </div>
+    </div>
+  </div>
+
+  <Card>
+    <CardHeader>
+      <CardTitle>Resumen</CardTitle>
+      <CardDescription>Recuento por severidad y metadatos</CardDescription>
+    </CardHeader>
+    <CardContent class="space-y-3">
+      {#if data.summary.total === 0}
+        <Alert>
+          <AlertTitle>Sin vulnerabilidades detectadas</AlertTitle>
+          <AlertDescription>El análisis no ha encontrado vulnerabilidades.</AlertDescription>
+        </Alert>
+      {:else}
+        <div class="flex flex-wrap gap-2">
+          {#each Object.entries(data.summary.bySeverity) as [sev, count]}
+            <Badge variant={severityToVariant(sev)}>{sev}: {count}</Badge>
+          {/each}
+        </div>
+      {/if}
+      <Separator />
+      <div class="grid gap-1 text-sm">
+        <div><span class="text-muted-foreground">Repositorio:</span> {data.metadata?.RepoURL || '—'}</div>
+        <div><span class="text-muted-foreground">Branch:</span> {data.metadata?.Branch || '—'}</div>
+        <div><span class="text-muted-foreground">Commit:</span> {data.metadata?.Commit || '—'}</div>
+        <div><span class="text-muted-foreground">Autor:</span> {data.metadata?.Author || '—'}</div>
+      </div>
+    </CardContent>
+    <CardFooter class="justify-end">
+      <button
+        class={buttonVariants({ variant: 'default', size: 'default' })}
+        onclick={() => navigator.clipboard.writeText(JSON.stringify(data.report, null, 2))}
+        type="button"
+      >
+        Copiar JSON
+      </button>
+    </CardFooter>
+  </Card>
+
+  <Tabs value="targets" class="w-full">
+    <TabsList>
+      <TabsTrigger value="targets">Targets</TabsTrigger>
+      <TabsTrigger value="raw">JSON</TabsTrigger>
+    </TabsList>
+
+    <TabsContent value="targets" class="space-y-4">
+      {#each data.results as result, i (result.Target + i)}
+        <Card>
+          <CardHeader>
+            <CardTitle class="flex items-center justify-between gap-3">
+              <span class="truncate">{result.Target}</span>
+            </CardTitle>
+            <CardDescription>{result.Type} • {result.Class}</CardDescription>
+          </CardHeader>
+          <CardContent class="space-y-3">
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+              <div class={`rounded-md border p-2 ${result.Vulnerabilities?.length ? '' : 'opacity-50'}`}>
+                <div class="text-[10px] uppercase tracking-wide text-muted-foreground">Vulnerabilities</div>
+                <div class="mt-0.5 text-lg font-semibold text-destructive">{(result.Vulnerabilities?.length) || 0}</div>
+              </div>
+              <div class={`rounded-md border p-2 ${result.Secrets?.length ? '' : 'opacity-50'}`}>
+                <div class="text-[10px] uppercase tracking-wide text-muted-foreground">Secrets</div>
+                <div class="mt-0.5 text-lg font-semibold">{(result.Secrets?.length) || 0}</div>
+              </div>
+              <div class={`rounded-md border p-2 ${result.Misconfigurations?.length ? '' : 'opacity-50'}`}>
+                <div class="text-[10px] uppercase tracking-wide text-muted-foreground">Misconfigurations</div>
+                <div class="mt-0.5 text-lg font-semibold">{(result.Misconfigurations?.length) || 0}</div>
+              </div>
+              <div class={`rounded-md border p-2 ${(result.Licenses?.length || result.LicenseFindings?.length) ? '' : 'opacity-50'}`}>
+                <div class="text-[10px] uppercase tracking-wide text-muted-foreground">Licenses</div>
+                <div class="mt-0.5 text-lg font-semibold">{(result.Licenses?.length || result.LicenseFindings?.length) || 0}</div>
+              </div>
+            </div>
+            {#if result.Vulnerabilities && result.Vulnerabilities.length > 0}
+              <div class="overflow-x-auto">
+                <table class="w-full text-sm">
+                  <thead class="text-left text-muted-foreground">
+                    <tr class="border-b">
+                      <th class="py-2 pr-4">ID</th>
+                      <th class="py-2 pr-4">Paquete</th>
+                      <th class="py-2 pr-4">Versión</th>
+                      <th class="py-2 pr-4">Fix</th>
+                      <th class="py-2 pr-4">Severidad</th>
+                      <th class="py-2 pr-4">CVSS</th>
+                      <th class="py-2 pr-4">Título</th>
+                      <th class="py-2 pr-4">Fuente</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {#each result.Vulnerabilities as v}
+                      <tr class="border-b last:border-0 align-top">
+                        <td class="py-2 pr-4">
+                          {#if v.PrimaryURL}
+                            <a href={v.PrimaryURL} target="_blank" class="underline underline-offset-2">{v.VulnerabilityID}</a>
+                          {:else}
+                            {v.VulnerabilityID}
+                          {/if}
+                        </td>
+                        <td class="py-2 pr-4">
+                          <div class="font-medium">{v.PkgName}</div>
+                          <div class="text-xs text-muted-foreground">{v.PkgID}</div>
+                        </td>
+                        <td class="py-2 pr-4">{v.InstalledVersion || '—'}</td>
+                        <td class="py-2 pr-4">{v.FixedVersion || '—'}</td>
+                        <td class="py-2 pr-4">
+                          <Badge variant={severityToVariant(v.Severity)}>{v.Severity || 'UNKNOWN'}</Badge>
+                        </td>
+                        <td class="py-2 pr-4">
+                          {#if v.CVSS?.ghsa?.V3Score}
+                            {v.CVSS.ghsa.V3Score}
+                          {:else if v.CVSS?.nvd?.V3Score}
+                            {v.CVSS.nvd.V3Score}
+                          {:else}
+                            —
+                          {/if}
+                        </td>
+                        <td class="py-2 pr-4 min-w-[16rem]">{v.Title}</td>
+                        <td class="py-2 pr-4 text-xs text-muted-foreground">{v.SeveritySource}</td>
+                      </tr>
+                    {/each}
+                  </tbody>
+                </table>
+              </div>
+            {:else}
+              <p class="text-sm text-muted-foreground">Sin vulnerabilidades.</p>
+            {/if}
+
+            {#if result.Secrets?.length}
+              <Separator />
+              <div class="space-y-2">
+                <h3 class="text-sm font-medium">Secrets</h3>
+                <ul class="list-disc pl-5 text-sm">
+                  {#each result.Secrets as s}
+                    <li>{JSON.stringify(s)}</li>
+                  {/each}
+                </ul>
+              </div>
+            {/if}
+            {#if result.Misconfigurations?.length}
+              <Separator />
+              <div class="space-y-2">
+                <h3 class="text-sm font-medium">Misconfigurations</h3>
+                <ul class="list-disc pl-5 text-sm">
+                  {#each result.Misconfigurations as m}
+                    <li>{JSON.stringify(m)}</li>
+                  {/each}
+                </ul>
+              </div>
+            {/if}
+            {#if (result.Licenses?.length || result.LicenseFindings?.length)}
+              <Separator />
+              <div class="space-y-2">
+                <h3 class="text-sm font-medium">Licenses</h3>
+                <ul class="list-disc pl-5 text-sm">
+                  {#each (result.Licenses || result.LicenseFindings) as l}
+                    <li>{JSON.stringify(l)}</li>
+                  {/each}
+                </ul>
+              </div>
+            {/if}
+          </CardContent>
+        </Card>
+      {/each}
+    </TabsContent>
+
+    <TabsContent value="raw">
+      <Card>
+        <CardHeader>
+          <CardTitle>Raw JSON</CardTitle>
+          <CardDescription>Datos completos del reporte</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <pre class="rounded-md bg-muted p-4 text-xs overflow-x-auto max-h-[60vh]">{JSON.stringify(data.report, null, 2)}</pre>
+        </CardContent>
+      </Card>
+    </TabsContent>
+  </Tabs>
+</div>
+
+
