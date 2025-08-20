@@ -1,4 +1,5 @@
 <script lang="ts">
+  import type { PreparedTrivyData } from '$lib/server/trivy';
   import { Badge } from "$lib/components/ui/badge";
   import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "$lib/components/ui/card";
   import { Separator } from "$lib/components/ui/separator";
@@ -6,7 +7,7 @@
   import { Alert, AlertDescription, AlertTitle } from "$lib/components/ui/alert";
   import { buttonVariants } from "$lib/components/ui/button/button.svelte";
 
-  let { data } = $props<any>();
+  let { prepared }: { prepared: PreparedTrivyData } = $props();
 
   const severityToVariant = (severity: string) => {
     const s = (severity || '').toUpperCase();
@@ -17,35 +18,36 @@
     return 'outline';
   };
 
-  const formatDate = (iso?: string) => iso ? new Date(iso).toLocaleString() : '';
+  const formatDate = (iso?: string) => (iso ? new Date(iso).toLocaleString() : '');
+  const orderedSeverities = ['CRITICAL','HIGH','MEDIUM','LOW'];
 </script>
 
 <div class="mx-auto max-w-6xl p-6 space-y-6">
   <div class="flex flex-wrap items-center justify-between gap-3">
     <div>
       <h1 class="text-2xl font-bold tracking-tight">Trivy Report</h1>
-      <p class="text-sm text-muted-foreground">Schema {data.schemaVersion} • {data.artifactType} • {data.artifactName}</p>
-      {#if data.metadata?.RepoURL}
-        <p class="text-xs text-muted-foreground">Repo: {data.metadata.RepoURL} @ {data.metadata.Branch} ({data.metadata.Commit.slice(0,7)})</p>
+      <p class="text-sm text-muted-foreground">Schema {prepared.schemaVersion} • {prepared.artifactType} • {prepared.artifactName}</p>
+      {#if prepared.metadata?.RepoURL}
+        <p class="text-xs text-muted-foreground">Repo: {prepared.metadata.RepoURL} @ {prepared.metadata.Branch} ({prepared.metadata.Commit?.slice(0,7)})</p>
       {/if}
-      <p class="text-xs text-muted-foreground">Generado: {formatDate(data.createdAt)}</p>
+      <p class="text-xs text-muted-foreground">Generado: {formatDate(prepared.createdAt)}</p>
     </div>
     <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 w-full max-w-md sm:max-w-none sm:w-auto">
-      <div class={`rounded-md border p-3 ${data.typeTotals.vulnerabilities ? '' : 'opacity-50'}`}>
+      <div class={`rounded-md border p-3 ${prepared.typeTotals.vulnerabilities ? '' : 'opacity-50'}`}>
         <div class="text-xs text-muted-foreground">Vulnerabilities</div>
-        <div class="mt-1 text-xl font-semibold text-destructive">{data.typeTotals.vulnerabilities}</div>
+        <div class="mt-1 text-xl font-semibold text-destructive">{prepared.typeTotals.vulnerabilities}</div>
       </div>
-      <div class={`rounded-md border p-3 ${data.typeTotals.secrets ? '' : 'opacity-50'}`}>
+      <div class={`rounded-md border p-3 ${prepared.typeTotals.secrets ? '' : 'opacity-50'}`}>
         <div class="text-xs text-muted-foreground">Secrets</div>
-        <div class="mt-1 text-xl font-semibold">{data.typeTotals.secrets}</div>
+        <div class="mt-1 text-xl font-semibold">{prepared.typeTotals.secrets}</div>
       </div>
-      <div class={`rounded-md border p-3 ${data.typeTotals.misconfigurations ? '' : 'opacity-50'}`}>
+      <div class={`rounded-md border p-3 ${prepared.typeTotals.misconfigurations ? '' : 'opacity-50'}`}>
         <div class="text-xs text-muted-foreground">Misconfigurations</div>
-        <div class="mt-1 text-xl font-semibold">{data.typeTotals.misconfigurations}</div>
+        <div class="mt-1 text-xl font-semibold">{prepared.typeTotals.misconfigurations}</div>
       </div>
-      <div class={`rounded-md border p-3 ${data.typeTotals.licenses ? '' : 'opacity-50'}`}>
+      <div class={`rounded-md border p-3 ${prepared.typeTotals.licenses ? '' : 'opacity-50'}`}>
         <div class="text-xs text-muted-foreground">Licenses</div>
-        <div class="mt-1 text-xl font-semibold">{data.typeTotals.licenses}</div>
+        <div class="mt-1 text-xl font-semibold">{prepared.typeTotals.licenses}</div>
       </div>
     </div>
   </div>
@@ -56,30 +58,32 @@
       <CardDescription>Recuento por severidad y metadatos</CardDescription>
     </CardHeader>
     <CardContent class="space-y-3">
-      {#if data.summary.total === 0}
+      {#if prepared.summary.total === 0}
         <Alert>
           <AlertTitle>Sin vulnerabilidades detectadas</AlertTitle>
           <AlertDescription>El análisis no ha encontrado vulnerabilidades.</AlertDescription>
         </Alert>
       {:else}
         <div class="flex flex-wrap gap-2">
-          {#each Object.entries(data.summary.bySeverity) as [sev, count]}
-            <Badge variant={severityToVariant(sev)}>{sev}: {count}</Badge>
+          {#each orderedSeverities as sev}
+            {#if prepared.summary.bySeverity[sev]}
+              <Badge variant={severityToVariant(sev)}>{sev}: {prepared.summary.bySeverity[sev]}</Badge>
+            {/if}
           {/each}
         </div>
       {/if}
       <Separator />
       <div class="grid gap-1 text-sm">
-        <div><span class="text-muted-foreground">Repositorio:</span> {data.metadata?.RepoURL || '—'}</div>
-        <div><span class="text-muted-foreground">Branch:</span> {data.metadata?.Branch || '—'}</div>
-        <div><span class="text-muted-foreground">Commit:</span> {data.metadata?.Commit || '—'}</div>
-        <div><span class="text-muted-foreground">Autor:</span> {data.metadata?.Author || '—'}</div>
+        <div><span class="text-muted-foreground">Repositorio:</span> {prepared.metadata?.RepoURL || '—'}</div>
+        <div><span class="text-muted-foreground">Branch:</span> {prepared.metadata?.Branch || '—'}</div>
+        <div><span class="text-muted-foreground">Commit:</span> {prepared.metadata?.Commit || '—'}</div>
+        <div><span class="text-muted-foreground">Autor:</span> {prepared.metadata?.Author || '—'}</div>
       </div>
     </CardContent>
     <CardFooter class="justify-end">
       <button
         class={buttonVariants({ variant: 'default', size: 'default' })}
-        onclick={() => navigator.clipboard.writeText(JSON.stringify(data.report, null, 2))}
+        onclick={() => navigator.clipboard.writeText(JSON.stringify(prepared.report, null, 2))}
         type="button"
       >
         Copiar JSON
@@ -94,7 +98,7 @@
     </TabsList>
 
     <TabsContent value="targets" class="space-y-4">
-      {#each data.results as result, i (result.Target + i)}
+      {#each prepared.results as result, i (result.Target + i)}
         <Card>
           <CardHeader>
             <CardTitle class="flex items-center justify-between gap-3">
@@ -121,6 +125,7 @@
                 <div class="mt-0.5 text-lg font-semibold">{(result.Licenses?.length || result.LicenseFindings?.length) || 0}</div>
               </div>
             </div>
+
             {#if result.Vulnerabilities && result.Vulnerabilities.length > 0}
               <div class="overflow-x-auto">
                 <table class="w-full text-sm">
@@ -220,7 +225,7 @@
           <CardDescription>Datos completos del reporte</CardDescription>
         </CardHeader>
         <CardContent>
-          <pre class="rounded-md bg-muted p-4 text-xs overflow-x-auto max-h-[60vh]">{JSON.stringify(data.report, null, 2)}</pre>
+          <pre class="rounded-md bg-muted p-4 text-xs overflow-x-auto max-h-[60vh]">{JSON.stringify(prepared.report, null, 2)}</pre>
         </CardContent>
       </Card>
     </TabsContent>
