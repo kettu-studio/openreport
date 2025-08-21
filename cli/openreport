@@ -1,0 +1,79 @@
+#!/bin/bash
+
+# openreport - CLI para subir resultados de reportes
+
+# Función para mostrar la ayuda
+show_help() {
+  echo "Uso: ./openreport upload <archivo> -p <proyecto> --api <url>"
+  echo
+  echo "Comandos:"
+  echo "  upload <archivo> -p <proyecto> --api <url>"
+  echo "    Sube un archivo JSON de resultados a un proyecto específico."
+  echo "    <archivo>: Ruta al archivo JSON de resultados."
+  echo "    -p, --project: Nombre del proyecto de destino."
+  echo "    --api: URL base de la API (ej. https://api.miempresa.com)."
+  echo
+  echo "Ejemplo:"
+  echo "  ./openreport upload results.json -p mi-proyecto --api https://openreport.com"
+}
+
+# La lógica principal de la CLI
+main() {
+  if [ "$1" == "upload" ]; then
+    local file=""
+    local project=""
+    local api_url=""
+
+    # Parsear los argumentos
+    shift # Elimina "upload" del array de argumentos
+    while [ "$1" != "" ]; do
+      case "$1" in
+        -p | --project )
+          shift
+          project="$1"
+          ;;
+        --api )
+          shift
+          api_url="$1"
+          ;;
+        * )
+          file="$1"
+          ;;
+      esac
+      shift
+    done
+
+    # Validar que se hayan proporcionado todos los valores
+    if [ -z "$file" ] || [ -z "$project" ] || [ -z "$api_url" ]; then
+      echo "Error: Faltan argumentos. Se requieren el archivo, el proyecto y la URL de la API."
+      show_help
+      exit 1
+    fi
+
+    # Validar si el archivo JSON existe
+    if [ ! -f "$file" ]; then
+      echo "Error: El archivo '$file' no existe."
+      exit 1
+    fi
+
+    # Construye la URL completa
+    local endpoint_url="${api_url}/api/projects/${project}/upload"
+
+    echo "Subiendo '$file' a '$endpoint_url'..."
+
+    # Realiza la petición POST con curl
+    curl -X POST \
+         -H "Content-Type: application/json" \
+         --data-binary "@$file" \
+         "$endpoint_url"
+
+    echo
+    echo "Petición enviada. Revisa la respuesta de la API para confirmar el resultado."
+
+  else
+    show_help
+  fi
+}
+
+# Ejecutar la función principal
+main "$@"
