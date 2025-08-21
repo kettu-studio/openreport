@@ -2,7 +2,7 @@ name: Docker Push CI
 on:
   push:
     tags:
-      - "v*"
+      - "*"
 jobs:
   build-push:
     runs-on: ubuntu-latest
