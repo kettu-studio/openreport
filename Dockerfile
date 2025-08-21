@@ -14,7 +14,7 @@ RUN npm install
 COPY . .
 
 # Build the SvelteKit application for production.
-RUN npm ci --omit dev
+RUN npm run build
 
 # Stage 2: Create the final, production-ready image
 FROM node:24-alpine AS runner
