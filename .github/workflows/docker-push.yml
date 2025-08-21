@@ -6,9 +6,7 @@ on:
       - "v*"
 
 jobs:
-
   build:
-    if: github.event.base_ref == 'refs/heads/main'
     runs-on: ubuntu-latest
 
     steps:
