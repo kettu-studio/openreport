@@ -30,6 +30,8 @@ spec:
           value: "production"
         - name: PORT
           value: "3000"
+        - name: OR_DOMAIN
+          value: "https://openreport.kettu.tech"  # Cambiar por tu dominio real
         volumeMounts:
         - name: data-storage
           mountPath: /app/data
