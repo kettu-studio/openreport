@@ -6,7 +6,7 @@
   const orderedSeverities = ['CRITICAL','HIGH','MEDIUM','LOW'];
 </script>
 
-<div class="mx-auto max-w-5xl p-6 space-y-6">
+<div class="mx-auto max-w-6xl p-6 space-y-6">
   <div class="flex items-center justify-between">
     <h1 class="text-2xl font-bold tracking-tight">Projects</h1>
     <a href="/projects/create" class={buttonVariants({ variant: 'default' })}>Crear proyecto</a>
