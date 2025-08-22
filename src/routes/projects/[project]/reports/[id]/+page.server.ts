@@ -3,6 +3,7 @@ import { readProjectReport } from '$lib/server/storage';
 import { prepareTrivyData } from '$lib/server/trivy';
 import { detectReportType } from '$lib/server/reports';
 import { prepareGitleaksData } from '$lib/server/gitleaks';
+import { prepareSyftData } from '$lib/server/syft';
 
 export const load: PageServerLoad = async ({ params }) => {
   const { project, id } = params;
@@ -14,6 +15,9 @@ export const load: PageServerLoad = async ({ params }) => {
   }
   if (type === 'gitleaks') {
     return { project, id, kind: 'gitleaks', prepared: prepareGitleaksData(report) };
+  }
+  if (type === 'syft') {
+    return { project, id, kind: 'syft', prepared: prepareSyftData(report) };
   }
   return { project, id, kind: 'unknown', raw: report };
 };

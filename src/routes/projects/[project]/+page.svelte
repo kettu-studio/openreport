@@ -6,6 +6,7 @@
   import { Tabs, TabsList, TabsTrigger, TabsContent } from "$lib/components/ui/tabs";
   import ReportView from '$lib/report/ReportView.svelte';
   import GitleaksView from '$lib/report/GitleaksView.svelte';
+  import SyftView from '$lib/report/SyftView.svelte';
   const orderedSeverities = ['CRITICAL','HIGH','MEDIUM','LOW'];
   function sevVariant(sev: string) {
     return (sev==='CRITICAL'||sev==='HIGH') ? 'destructive' : (sev==='MEDIUM' ? 'secondary' : 'outline');
@@ -22,25 +23,39 @@
     </div>
   </div>
 
-  <Tabs value={data.latestTrivy ? 'trivy' : (data.latestGitleaks ? 'gitleaks' : 'trivy')} class="w-full">
+  <Tabs value={(() => {
+    if (data.latestTrivy) return 'vulnerabilidades';
+    if (data.latestGitleaks) return 'secretos';
+    if (data.latestSyft) return 'dependencias';
+    return 'vulnerabilidades';
+  })()} class="w-full">
     <TabsList>
-      <TabsTrigger value="trivy">Trivy</TabsTrigger>
-      <TabsTrigger value="gitleaks">Gitleaks</TabsTrigger>
+      <TabsTrigger value="vulnerabilidades">Vulnerabilidades</TabsTrigger>
+      <TabsTrigger value="secretos">Secretos</TabsTrigger>
+      <TabsTrigger value="dependencias">Dependencias</TabsTrigger>
     </TabsList>
 
-    <TabsContent value="trivy" class="space-y-4">
+    <TabsContent value="vulnerabilidades" class="space-y-4">
       {#if data.latestTrivy}
         <ReportView prepared={data.latestTrivy.prepared} />
       {:else}
-        <p class="text-sm text-muted-foreground">Sin reportes Trivy aún.</p>
+        <p class="text-sm text-muted-foreground">Sin reportes de vulnerabilidades aún.</p>
       {/if}
     </TabsContent>
 
-    <TabsContent value="gitleaks" class="space-y-4">
+    <TabsContent value="secretos" class="space-y-4">
       {#if data.latestGitleaks}
         <GitleaksView prepared={data.latestGitleaks.prepared} />
       {:else}
-        <p class="text-sm text-muted-foreground">Sin reportes Gitleaks aún.</p>
+        <p class="text-sm text-muted-foreground">Sin reportes de secretos aún.</p>
+      {/if}
+    </TabsContent>
+
+    <TabsContent value="dependencias" class="space-y-4">
+      {#if data.latestSyft}
+        <SyftView prepared={data.latestSyft.prepared} />
+      {:else}
+        <p class="text-sm text-muted-foreground">Sin reportes de dependencias aún.</p>
       {/if}
     </TabsContent>
   </Tabs>

@@ -21,7 +21,7 @@ show_help() {
   echo "    --api: URL base de la API (ej. https://openreport.kettu.tech)."
   echo
   echo "  scan <directorio> -p <proyecto> --api <url>"
-  echo "    Escanea un directorio con Trivy y Gitleaks, y sube los reportes."
+  echo "    Escanea un directorio con Trivy, Gitleaks y Syft, y sube los reportes."
   echo "    <directorio>: Ruta al directorio a escanear (por defecto: ./)."
   echo "    -p, --project: Nombre del proyecto de destino."
   echo "    --api: URL base de la API (ej. https://openreport.kettu.tech)."
@@ -102,6 +102,41 @@ install_gitleaks() {
   fi
 }
 
+# Función para instalar Syft
+install_syft() {
+  echo -e "${BLUE}Instalando Syft...${NC}"
+  
+  if command -v syft &> /dev/null; then
+    echo -e "${GREEN}Syft ya está instalado.${NC}"
+    return 0
+  fi
+  
+  # Detectar el sistema operativo
+  if [[ "$OSTYPE" == "linux-gnu"* ]]; then
+    # Linux
+    curl -sSfL https://raw.githubusercontent.com/anchore/syft/main/install.sh | sh -s -- -b /usr/local/bin
+  elif [[ "$OSTYPE" == "darwin"* ]]; then
+    # macOS
+    if command -v brew &> /dev/null; then
+      brew install syft
+    else
+      echo -e "${RED}Error: Homebrew no está instalado. Instala Homebrew primero.${NC}"
+      return 1
+    fi
+  else
+    echo -e "${RED}Error: Sistema operativo no soportado. Instala Syft manualmente.${NC}"
+    return 1
+  fi
+  
+  if command -v syft &> /dev/null; then
+    echo -e "${GREEN}Syft instalado correctamente.${NC}"
+    return 0
+  else
+    echo -e "${RED}Error: No se pudo instalar Syft.${NC}"
+    return 1
+  fi
+}
+
 # Función para ejecutar escaneo con Trivy
 run_trivy_scan() {
   local directory="$1"
@@ -144,6 +179,26 @@ run_gitleaks_scan() {
     return 1
   fi
 }
+
+# Función para ejecutar escaneo con Syft
+run_syft_scan() {
+  local directory="$1"
+  local output_file="$2"
+  
+  echo -e "${BLUE}Ejecutando escaneo de Syft en: $directory${NC}"
+  
+  # Ejecutar Syft
+  syft packages "$directory" --output json --file "$output_file"
+  
+  # Verificar si el archivo de salida se creó correctamente
+  if [ -f "$output_file" ] && [ -s "$output_file" ]; then
+    echo -e "${GREEN}Escaneo de Syft completado. Resultado guardado en: $output_file${NC}"
+    return 0
+  else
+    echo -e "${RED}Error en el escaneo de Syft. No se pudo crear el archivo de salida.${NC}"
+    return 1
+  fi
+ }
 
 # Función para subir reporte
 upload_report() {
@@ -240,6 +295,7 @@ scan_command() {
   local timestamp=$(date +%Y%m%d_%H%M%S)
   local trivy_output="$temp_dir/trivy-scan_$timestamp.json"
   local gitleaks_output="$temp_dir/gitleaks-scan_$timestamp.json"
+  local syft_output="$temp_dir/syft-scan_$timestamp.json"
   
   # Crear directorio si no existe
   mkdir -p "$temp_dir"
@@ -255,11 +311,17 @@ scan_command() {
     exit 1
   fi
   
+  if ! install_syft; then
+    echo -e "${RED}Error: No se pudo instalar Syft. Abortando.${NC}"
+    exit 1
+  fi
+  
   echo ""
   
   # Ejecutar escaneos
   local trivy_success=false
   local gitleaks_success=false
+  local syft_success=false
   
   if run_trivy_scan "$directory" "$trivy_output"; then
     trivy_success=true
@@ -267,6 +329,10 @@ scan_command() {
   
   if run_gitleaks_scan "$directory" "$gitleaks_output"; then
     gitleaks_success=true
+  fi
+  
+  if run_syft_scan "$directory" "$syft_output"; then
+    syft_success=true
   fi
   
   echo ""
@@ -286,8 +352,14 @@ scan_command() {
     fi
   fi
   
+  if [ "$syft_success" = true ]; then
+    if ! upload_report "$syft_output" "$project" "$api_url"; then
+      upload_success=false
+    fi
+  fi
+  
   # Limpiar archivos temporales del escaneo actual
-  # rm -f "$trivy_output" "$gitleaks_output"
+  # rm -f "$trivy_output" "$gitleaks_output" "$syft_output"
   
   # Si la carpeta está vacía, eliminarla también
   if [ -z "$(ls -A "$temp_dir" 2>/dev/null)" ]; then

@@ -8,7 +8,7 @@ export type StoredReportMeta = {
   id: string; // ISO timestamp
   createdAt: string;
   totals: { total: number; bySeverity: Record<string, number> };
-  type?: 'trivy' | 'gitleaks' | 'unknown';
+  type?: 'trivy' | 'gitleaks' | 'syft' | 'unknown';
 };
 
 export function ensureProject(project: string) {
@@ -59,6 +59,13 @@ export function listProjectReports(project: string): StoredReportMeta[] {
       totals.total = report.length;
       // Para Gitleaks, todos los hallazgos son de severidad "HIGH" por defecto
       totals.bySeverity['HIGH'] = report.length;
+    } else if (report && typeof report === 'object' && !Array.isArray(report) && 'artifacts' in report) {
+      // Reporte de Syft
+      type = 'syft';
+      const artifacts = report?.artifacts || [];
+      totals.total = artifacts.length;
+      // Para Syft, todos los artefactos son de severidad "MEDIUM" por defecto
+      totals.bySeverity['MEDIUM'] = artifacts.length;
     }
     
     return { id: f.replace(/\.json$/, ''), createdAt, totals, type };
