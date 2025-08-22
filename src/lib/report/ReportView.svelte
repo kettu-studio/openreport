@@ -47,11 +47,34 @@
   <div class="flex flex-wrap items-center justify-between gap-3">
     <div>
       <h1 class="text-2xl font-bold tracking-tight">Trivy Report</h1>
-      <p class="text-sm text-muted-foreground">Schema {prepared.schemaVersion} • {prepared.artifactType} • {prepared.artifactName}</p>
+      
+      <!-- Información del repositorio -->
       {#if prepared.metadata?.RepoURL}
-        <p class="text-xs text-muted-foreground">Repo: {prepared.metadata.RepoURL} @ {prepared.metadata.Branch} ({prepared.metadata.Commit?.slice(0,7)})</p>
+        <div class="mt-2 space-y-1">
+          <div class="flex items-center gap-2 text-sm">
+            <span class="text-muted-foreground">📁 Repo:</span>
+            <span class="font-medium">{prepared.metadata.RepoURL}</span>
+          </div>
+          <div class="flex items-center gap-2 text-sm">
+            <span class="text-muted-foreground">🌿 Rama:</span>
+            <span class="font-medium">{prepared.metadata.Branch}</span>
+          </div>
+          <div class="flex items-center gap-2 text-sm">
+            <span class="text-muted-foreground">🔗 Commit:</span>
+            <span class="font-mono text-xs bg-muted px-2 py-1 rounded">
+              {prepared.metadata.Commit?.slice(0,7) || '—'}
+            </span>
+          </div>
+          <div class="flex items-center gap-2 text-sm">
+            <span class="text-muted-foreground">📅 Generado:</span>
+            <span class="font-medium">{formatDate(prepared.createdAt)}</span>
+          </div>
+        </div>
+      {:else}
+        <div class="mt-2 text-sm text-muted-foreground">
+          📅 Generado: {formatDate(prepared.createdAt)}
+        </div>
       {/if}
-      <p class="text-xs text-muted-foreground">Generado: {formatDate(prepared.createdAt)}</p>
     </div>
     <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 w-full max-w-md sm:max-w-none sm:w-auto">
       <div class={`rounded-md border p-3 ${prepared.typeTotals.vulnerabilities ? '' : 'opacity-50'}`}>

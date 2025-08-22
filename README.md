@@ -75,16 +75,15 @@ npm run build
 ### Instalacion CLI
 
 ```bash
-# Descargar la CLI
-curl -L -o openreport https://raw.githubusercontent.com/kettu-studio/openreport/main/cli/openreport
-chmod +x openreport
-sudo mv openreport /usr/local/bin/
+# Descargar, hacer ejecutable y mover a PATH en una sola línea
+curl -L -o openreport https://raw.githubusercontent.com/kettu-studio/openreport/main/cli/openreport && chmod +x openreport && sudo mv openreport /usr/local/bin/
 
 # Verificar la instalación
 openreport --help
 ```
 
 ### CLI
+
 ```bash
 # Subir un reporte de Trivy
 openreport upload trivy-results.json -p mi-proyecto --api https://openreport.kettu.tech
@@ -92,9 +91,30 @@ openreport upload trivy-results.json -p mi-proyecto --api https://openreport.ket
 # Subir un reporte de Gitleaks
 openreport upload gitleaks-results.json -p mi-proyecto --api https://openreport.kettu.tech
 
+# Escanear un directorio completo (Trivy + Gitleaks)
+openreport scan ./ -p mi-proyecto --api https://openreport.kettu.tech
+
+# Escanear un directorio específico
+openreport scan /path/to/project -p proyecto-prod --api https://openreport.kettu.tech
+
 # Ver ayuda
 openreport --help
 ```
+
+#### Comando `scan`
+
+El comando `scan` es la funcionalidad más potente de la CLI:
+
+- **Instalación automática**: Instala Trivy y Gitleaks si no están disponibles
+- **Escaneo dual**: Ejecuta tanto Trivy (vulnerabilidades) como Gitleaks (secretos)
+- **Subida automática**: Sube ambos reportes al proyecto especificado
+- **Soporte multiplataforma**: Funciona en Linux y macOS
+- **Limpieza automática**: Elimina archivos temporales después del proceso
+
+**Requisitos del sistema:**
+- **Linux**: curl disponible (instalación automática)
+- **macOS**: Homebrew instalado (instalación automática)
+- **Ambos**: Permisos de escritura en `/usr/local/bin/`
 
 ### Formatos Soportados
 
