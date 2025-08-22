@@ -13,6 +13,11 @@ RUN npm install
 # Copy the rest of your application's source code
 COPY . .
 
+ENV NODE_ENV=production
+ENV OR_DOMAIN=https://openreport.local
+ENV PORT=3000
+ENV HOST=0.0.0.0
+
 # Build the SvelteKit application for production.
 RUN npm run build
 
