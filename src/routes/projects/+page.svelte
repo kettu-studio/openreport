@@ -64,7 +64,7 @@
       <div>
         <h4 class="font-medium mb-2">🔍 Comando de escaneo:</h4>
         <div class="bg-muted p-3 rounded-md font-mono text-sm">
-          openreport scan ./ -p nombre-proyecto --api https://openreport.kettu.tech
+          openreport scan ./ -p nombre-proyecto --api {data.domain}
         </div>
         <p class="text-sm text-muted-foreground mt-2">
           Este comando instalará automáticamente Trivy, Gitleaks y Syft, escaneará el directorio actual y subirá los reportes al proyecto especificado.
@@ -74,7 +74,7 @@
       <div>
         <h4 class="font-medium mb-2">📤 Subir reporte existente:</h4>
         <div class="bg-muted p-3 rounded-md font-mono text-sm">
-          openreport upload reporte.json -p nombre-proyecto --api https://openreport.kettu.tech
+          openreport upload reporte.json -p nombre-proyecto --api {data.domain}
         </div>
       </div>
 

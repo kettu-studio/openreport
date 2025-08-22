@@ -86,16 +86,16 @@ openreport --help
 
 ```bash
 # Subir un reporte de Trivy
-openreport upload trivy-results.json -p mi-proyecto --api https://openreport.kettu.tech
+openreport upload trivy-results.json -p mi-proyecto --api $OR_DOMAIN
 
 # Subir un reporte de Gitleaks
-openreport upload gitleaks-results.json -p mi-proyecto --api https://openreport.kettu.tech
+openreport upload gitleaks-results.json -p mi-proyecto --api $OR_DOMAIN
 
 # Escanear un directorio completo (Trivy + Gitleaks)
-openreport scan ./ -p mi-proyecto --api https://openreport.kettu.tech
+openreport scan ./ -p mi-proyecto --api $OR_DOMAIN
 
 # Escanear un directorio específico
-openreport scan /path/to/project -p proyecto-prod --api https://openreport.kettu.tech
+openreport scan /path/to/project -p proyecto-prod --api $OR_DOMAIN
 
 # Ver ayuda
 openreport --help
@@ -183,8 +183,37 @@ kubectl get pvc -n openreport
 
 | Variable | Descripción | Valor por Defecto |
 |----------|-------------|-------------------|
+| `OR_DOMAIN` | Dominio base de la aplicación (usado para generar URLs en CLI y UI) | `https://openreport.kettu.tech` |
+| `PORT` | Puerto del servidor | `3000` |
+| `HOST` | Host del servidor | `0.0.0.0` |
 | `NODE_ENV` | Entorno de ejecución | `production` |
-| `PORT` | Puerto de la aplicación | `3000` |
+
+### Configuración del Dominio
+
+La variable `OR_DOMAIN` es crucial para el funcionamiento correcto de la CLI y la generación de URLs en la interfaz web. Debes configurarla con tu dominio real:
+
+**Para desarrollo local:**
+```bash
+export OR_DOMAIN=http://localhost:3000
+```
+
+**Para producción:**
+```bash
+export OR_DOMAIN=https://tu-dominio.com
+```
+
+**En Docker Compose:**
+```yaml
+environment:
+  - OR_DOMAIN=https://tu-dominio.com
+```
+
+**En Kubernetes:**
+```yaml
+env:
+- name: OR_DOMAIN
+  value: "https://tu-dominio.com"
+```
 | `DATA_ROOT` | Directorio de datos | `/app/data` |
 
 ## 🛠️ Desarrollo

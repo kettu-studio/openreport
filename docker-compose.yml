@@ -1,0 +1,13 @@
+services:
+  openreport:
+    image: kettustudio/openreport:latest
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./data:/app/data
+    environment:
+      - NODE_ENV=production
+      - OR_DOMAIN=https://openreport.kettu.tech  # Cambiar por tu dominio real
+      - PORT=3000
+      - HOST=0.0.0.0
+    restart: unless-stopped
