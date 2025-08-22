@@ -62,13 +62,26 @@ main() {
     echo "Subiendo '$file' a '$endpoint_url'..."
 
     # Realiza la petición POST con curl
-    curl -X POST \
+    response=$(curl -s -X POST \
          -H "Content-Type: application/json" \
          --data-binary "@$file" \
-         "$endpoint_url"
-
-    echo
-    echo "Petición enviada. Revisa la respuesta de la API para confirmar el resultado."
+         "$endpoint_url")
+    
+    # Verificar si la respuesta fue exitosa
+    if [ $? -eq 0 ]; then
+      # Extraer la URL del reporte de la respuesta JSON
+      report_url=$(echo "$response" | grep -o '"reportUrl":"[^"]*"' | cut -d'"' -f4)
+      
+      if [ -n "$report_url" ]; then
+        echo "Reporte subido: $report_url"
+      else
+        echo "Reporte subido exitosamente, pero no se pudo obtener la URL del reporte."
+        echo "Respuesta de la API: $response"
+      fi
+    else
+      echo "Error al subir el reporte."
+      echo "Respuesta de la API: $response"
+    fi
 
   else
     show_help

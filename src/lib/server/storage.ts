@@ -69,6 +69,17 @@ export function readProjectReport(project: string, id: string): any | null {
   return JSON.parse(readFileSync(file, 'utf8'));
 }
 
+export function deleteProjectReport(project: string, id: string): boolean {
+  const file = join(process.cwd(), DATA_ROOT, project, `${id}.json`);
+  if (!existsSync(file)) return false;
+  try {
+    rmSync(file, { force: true });
+    return true;
+  } catch (error) {
+    return false;
+  }
+}
+
 export function deleteProject(project: string) {
   const dir = join(process.cwd(), DATA_ROOT, project);
   if (!existsSync(dir)) return;

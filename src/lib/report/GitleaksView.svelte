@@ -3,11 +3,33 @@
   import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "$lib/components/ui/card";
   import { Badge } from "$lib/components/ui/badge";
   import { Tabs, TabsList, TabsTrigger, TabsContent } from "$lib/components/ui/tabs";
+  import { buttonVariants } from "$lib/components/ui/button/button.svelte";
 
-  let { prepared }: { prepared: PreparedGitleaksData } = $props();
+  let { prepared, project, onDelete }: { 
+    prepared: PreparedGitleaksData; 
+    project?: string; 
+    onDelete?: () => void; 
+  } = $props();
 </script>
 
 <div class="mx-auto max-w-6xl p-6 space-y-4">
+  {#if project && onDelete}
+    <div class="flex items-center justify-between">
+      <div class="flex items-center gap-2">
+        <a href={`/projects/${encodeURIComponent(project)}`} class={buttonVariants({ variant: 'outline', size: 'sm' })}>
+          ← Volver a {project}
+        </a>
+      </div>
+      <button
+        onclick={onDelete}
+        class={buttonVariants({ variant: 'destructive', size: 'sm' })}
+        type="button"
+      >
+        Eliminar reporte
+      </button>
+    </div>
+  {/if}
+
   <Card>
     <CardHeader>
       <CardTitle>Gitleaks</CardTitle>
