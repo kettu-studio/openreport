@@ -7,7 +7,11 @@
   import { Alert, AlertDescription, AlertTitle } from "$lib/components/ui/alert";
   import { buttonVariants } from "$lib/components/ui/button/button.svelte";
 
-  let { prepared }: { prepared: PreparedTrivyData } = $props();
+  let { prepared, project, onDelete }: { 
+    prepared: PreparedTrivyData; 
+    project?: string; 
+    onDelete?: () => void; 
+  } = $props();
 
   const severityToVariant = (severity: string) => {
     const s = (severity || '').toUpperCase();
@@ -23,6 +27,23 @@
 </script>
 
 <div class="mx-auto max-w-6xl p-6 space-y-6">
+  {#if project && onDelete}
+    <div class="flex items-center justify-between">
+      <div class="flex items-center gap-2">
+        <a href={`/projects/${encodeURIComponent(project)}`} class={buttonVariants({ variant: 'outline', size: 'sm' })}>
+          ← Volver a {project}
+        </a>
+      </div>
+      <button
+        onclick={onDelete}
+        class={buttonVariants({ variant: 'destructive', size: 'sm' })}
+        type="button"
+      >
+        Eliminar reporte
+      </button>
+    </div>
+  {/if}
+
   <div class="flex flex-wrap items-center justify-between gap-3">
     <div>
       <h1 class="text-2xl font-bold tracking-tight">Trivy Report</h1>

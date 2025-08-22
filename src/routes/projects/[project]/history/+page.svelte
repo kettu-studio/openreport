@@ -55,7 +55,32 @@
                   </div>
                 </td>
                 <td class="py-2 pr-4">
-                  <a class="underline underline-offset-2" href={reportLink(data.project, r)}>Ver</a>
+                  <div class="flex items-center gap-2">
+                    <a class="underline underline-offset-2" href={reportLink(data.project, r)}>Ver</a>
+                    <button
+                      class="underline underline-offset-2 text-destructive cursor-pointer"
+                      onclick={async() => {
+                        if (confirm('¿Eliminar este reporte? Esta acción no se puede deshacer.')) {
+                          try {
+                            const response = await fetch(`/api/projects/${encodeURIComponent(data.project)}/reports/${encodeURIComponent(r.id)}/delete`, {
+                              method: 'DELETE'
+                            });
+                            if (response.ok) {
+                              window.location.reload();
+                            } else {
+                              const error = await response.json();
+                              alert(`Error al eliminar: ${error.error || 'Error desconocido'}`);
+                            }
+                          } catch (error) {
+                            alert('Error al eliminar el reporte');
+                          }
+                        }
+                      }}
+                      type="button"
+                    >
+                      Eliminar
+                    </button>
+                  </div>
                 </td>
               </tr>
             {/each}
