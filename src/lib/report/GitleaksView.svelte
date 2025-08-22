@@ -30,6 +30,47 @@
     </div>
   {/if}
 
+  <!-- Información del repositorio -->
+  <div class="flex flex-wrap items-center justify-between gap-3">
+    <div>
+      <h1 class="text-2xl font-bold tracking-tight">Gitleaks Report</h1>
+      
+      <!-- Información del repositorio -->
+      {#if prepared.metadata?.RepoURL}
+        <div class="mt-2 space-y-1">
+          <div class="flex items-center gap-2 text-sm">
+            <span class="text-muted-foreground">📁 Repo:</span>
+            <span class="font-medium">{prepared.metadata.RepoURL}</span>
+          </div>
+          <div class="flex items-center gap-2 text-sm">
+            <span class="text-muted-foreground">🌿 Rama:</span>
+            <span class="font-medium">{prepared.metadata.Branch}</span>
+          </div>
+          <div class="flex items-center gap-2 text-sm">
+            <span class="text-muted-foreground">🔗 Commit:</span>
+            <span class="font-mono text-xs bg-muted px-2 py-1 rounded">
+              {prepared.metadata.Commit?.slice(0,7) || '—'}
+            </span>
+          </div>
+          <div class="flex items-center gap-2 text-sm">
+            <span class="text-muted-foreground">📅 Generado:</span>
+            <span class="font-medium">{new Date(prepared.createdAt || Date.now()).toLocaleString()}</span>
+          </div>
+        </div>
+      {:else}
+        <div class="mt-2 text-sm text-muted-foreground">
+          📅 Generado: {new Date(prepared.createdAt || Date.now()).toLocaleString()}
+        </div>
+      {/if}
+    </div>
+    
+    <!-- Resumen de hallazgos -->
+    <div class="text-right">
+      <div class="text-2xl font-bold text-destructive">{prepared.summary.total}</div>
+      <div class="text-sm text-muted-foreground">Secretos detectados</div>
+    </div>
+  </div>
+
   <Card>
     <CardHeader>
       <CardTitle>Gitleaks</CardTitle>

@@ -32,22 +32,35 @@ export function listProjectReports(project: string): StoredReportMeta[] {
     const full = join(dir, f);
     const report = JSON.parse(readFileSync(full, 'utf8'));
     const createdAt = report?.CreatedAt || new Date().toISOString();
-    const results = report?.Results || [];
-    const totals = results.reduce(
-      (acc: any, r: any) => {
-        const vulns: any[] = r.Vulnerabilities ?? [];
-        for (const v of vulns) {
-          acc.total++;
-          const sev = (v.Severity || 'UNKNOWN').toUpperCase();
-          acc.bySeverity[sev] = (acc.bySeverity[sev] || 0) + 1;
-        }
-        return acc;
-      },
-      { total: 0, bySeverity: {} as Record<string, number> }
-    );
+    
+    let totals = { total: 0, bySeverity: {} as Record<string, number> };
     let type: 'trivy' | 'gitleaks' | 'unknown' = 'unknown';
-    if (report && typeof report === 'object' && !Array.isArray(report) && 'Results' in report) type = 'trivy';
-    if (Array.isArray(report)) type = 'gitleaks';
+    
+    // Detectar tipo de reporte y calcular totales
+    if (report && typeof report === 'object' && !Array.isArray(report) && 'Results' in report) {
+      // Reporte de Trivy
+      type = 'trivy';
+      const results = report?.Results || [];
+      totals = results.reduce(
+        (acc: any, r: any) => {
+          const vulns: any[] = r.Vulnerabilities ?? [];
+          for (const v of vulns) {
+            acc.total++;
+            const sev = (v.Severity || 'UNKNOWN').toUpperCase();
+            acc.bySeverity[sev] = (acc.bySeverity[sev] || 0) + 1;
+          }
+          return acc;
+        },
+        { total: 0, bySeverity: {} as Record<string, number> }
+      );
+    } else if (Array.isArray(report)) {
+      // Reporte de Gitleaks
+      type = 'gitleaks';
+      totals.total = report.length;
+      // Para Gitleaks, todos los hallazgos son de severidad "HIGH" por defecto
+      totals.bySeverity['HIGH'] = report.length;
+    }
+    
     return { id: f.replace(/\.json$/, ''), createdAt, totals, type };
   });
   metas.sort((a, b) => b.id.localeCompare(a.id));

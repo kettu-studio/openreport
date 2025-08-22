@@ -2,89 +2,362 @@
 
 # openreport - CLI para subir resultados de reportes
 
+# Colores para output
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+BLUE='\033[0;34m'
+NC='\033[0m' # No Color
+
 # Función para mostrar la ayuda
 show_help() {
-  echo "Uso: ./openreport upload <archivo> -p <proyecto> --api <url>"
+  echo "Uso: openreport <comando> [opciones]"
   echo
   echo "Comandos:"
   echo "  upload <archivo> -p <proyecto> --api <url>"
   echo "    Sube un archivo JSON de resultados a un proyecto específico."
   echo "    <archivo>: Ruta al archivo JSON de resultados."
   echo "    -p, --project: Nombre del proyecto de destino."
-  echo "    --api: URL base de la API (ej. https://api.miempresa.com)."
+  echo "    --api: URL base de la API (ej. https://openreport.kettu.tech)."
   echo
-  echo "Ejemplo:"
-  echo "  ./openreport upload results.json -p mi-proyecto --api https://openreport.com"
+  echo "  scan <directorio> -p <proyecto> --api <url>"
+  echo "    Escanea un directorio con Trivy y Gitleaks, y sube los reportes."
+  echo "    <directorio>: Ruta al directorio a escanear (por defecto: ./)."
+  echo "    -p, --project: Nombre del proyecto de destino."
+  echo "    --api: URL base de la API (ej. https://openreport.kettu.tech)."
+  echo
+  echo "Ejemplos:"
+  echo "  openreport upload results.json -p mi-proyecto --api https://openreport.kettu.tech"
+  echo "  openreport scan ./ -p mi-proyecto --api https://openreport.kettu.tech"
+  echo "  openreport scan /path/to/project -p proyecto-prod --api https://openreport.kettu.tech"
+}
+
+# Función para instalar Trivy
+install_trivy() {
+  echo -e "${BLUE}Instalando Trivy...${NC}"
+  
+  if command -v trivy &> /dev/null; then
+    echo -e "${GREEN}Trivy ya está instalado.${NC}"
+    return 0
+  fi
+  
+  # Detectar el sistema operativo
+  if [[ "$OSTYPE" == "linux-gnu"* ]]; then
+    # Linux
+    curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh -s -- -b /usr/local/bin v0.48.0
+  elif [[ "$OSTYPE" == "darwin"* ]]; then
+    # macOS
+    if command -v brew &> /dev/null; then
+      brew install trivy
+    else
+      echo -e "${RED}Error: Homebrew no está instalado. Instala Homebrew primero.${NC}"
+      return 1
+    fi
+  else
+    echo -e "${RED}Error: Sistema operativo no soportado. Instala Trivy manualmente.${NC}"
+    return 1
+  fi
+  
+  if command -v trivy &> /dev/null; then
+    echo -e "${GREEN}Trivy instalado correctamente.${NC}"
+    return 0
+  else
+    echo -e "${RED}Error: No se pudo instalar Trivy.${NC}"
+    return 1
+  fi
+}
+
+# Función para instalar Gitleaks
+install_gitleaks() {
+  echo -e "${BLUE}Instalando Gitleaks...${NC}"
+  
+  if command -v gitleaks &> /dev/null; then
+    echo -e "${GREEN}Gitleaks ya está instalado.${NC}"
+    return 0
+  fi
+  
+  # Detectar el sistema operativo
+  if [[ "$OSTYPE" == "linux-gnu"* ]]; then
+    # Linux
+    curl -sSfL https://raw.githubusercontent.com/zricethezav/gitleaks/master/install.sh | sh -s -- -b /usr/local/bin
+  elif [[ "$OSTYPE" == "darwin"* ]]; then
+    # macOS
+    if command -v brew &> /dev/null; then
+      brew install gitleaks
+    else
+      echo -e "${RED}Error: Homebrew no está instalado. Instala Homebrew primero.${NC}"
+      return 1
+    fi
+  else
+    echo -e "${RED}Error: Sistema operativo no soportado. Instala Gitleaks manualmente.${NC}"
+    return 1
+  fi
+  
+  if command -v gitleaks &> /dev/null; then
+    echo -e "${GREEN}Gitleaks instalado correctamente.${NC}"
+    return 0
+  else
+    echo -e "${RED}Error: No se pudo instalar Gitleaks.${NC}"
+    return 1
+  fi
+}
+
+# Función para ejecutar escaneo con Trivy
+run_trivy_scan() {
+  local directory="$1"
+  local output_file="$2"
+  
+  echo -e "${BLUE}Ejecutando escaneo de Trivy en: $directory${NC}"
+  
+  # Ejecutar Trivy
+  trivy fs --format json --output "$output_file" "$directory"
+  
+  # Verificar si el archivo de salida se creó correctamente
+  if [ -f "$output_file" ] && [ -s "$output_file" ]; then
+    echo -e "${GREEN}Escaneo de Trivy completado. Resultado guardado en: $output_file${NC}"
+    return 0
+  else
+    echo -e "${RED}Error en el escaneo de Trivy. No se pudo crear el archivo de salida.${NC}"
+    return 1
+  fi
+}
+
+# Función para ejecutar escaneo con Gitleaks
+run_gitleaks_scan() {
+  local directory="$1"
+  local output_file="$2"
+  
+  echo -e "${BLUE}Ejecutando escaneo de Gitleaks en: $directory${NC}"
+  
+  # Ejecutar Gitleaks
+  gitleaks detect --source "$directory" --report-format json --report-path "$output_file"
+  
+  # Gitleaks puede devolver códigos de salida diferentes:
+  # - 0: Sin secretos encontrados
+  # - 1: Secretos encontrados (esto es exitoso para nosotros)
+  # Verificar si el archivo de salida se creó correctamente
+  if [ -f "$output_file" ] && [ -s "$output_file" ]; then
+    echo -e "${GREEN}Escaneo de Gitleaks completado. Resultado guardado en: $output_file${NC}"
+    return 0
+  else
+    echo -e "${RED}Error en el escaneo de Gitleaks. No se pudo crear el archivo de salida.${NC}"
+    return 1
+  fi
+}
+
+# Función para subir reporte
+upload_report() {
+  local file="$1"
+  local project="$2"
+  local api_url="$3"
+  
+  echo -e "${BLUE}Subiendo reporte: $file${NC}"
+  
+  # Construye la URL completa
+  local endpoint_url="${api_url}/api/projects/${project}/upload"
+  
+  # Realiza la petición POST con curl
+  response=$(curl -s -X POST \
+       -H "Content-Type: application/json" \
+       --data-binary "@$file" \
+       "$endpoint_url")
+  
+  # Verificar si la respuesta fue exitosa
+  if [ $? -eq 0 ]; then
+    # Extraer la URL del reporte de la respuesta JSON
+    report_url=$(echo "$response" | grep -o '"reportUrl":"[^"]*"' | cut -d'"' -f4)
+    
+    if [ -n "$report_url" ]; then
+      echo -e "${GREEN}Reporte subido: $report_url${NC}"
+      return 0
+    else
+      echo -e "${YELLOW}Reporte subido exitosamente, pero no se pudo obtener la URL del reporte.${NC}"
+      echo "Respuesta de la API: $response"
+      return 0
+    fi
+  else
+    echo -e "${RED}Error al subir el reporte.${NC}"
+    echo "Respuesta de la API: $response"
+    return 1
+  fi
+}
+
+# Función para el comando scan
+scan_command() {
+  local directory="./"
+  local project=""
+  local api_url=""
+  
+  # Parsear los argumentos
+  shift # Elimina "scan" del array de argumentos
+  
+  # El primer argumento es el directorio (opcional)
+  if [ "$1" != "" ] && [[ "$1" != -* ]]; then
+    directory="$1"
+    shift
+  fi
+  
+  while [ "$1" != "" ]; do
+    case "$1" in
+      -p | --project )
+        shift
+        project="$1"
+        ;;
+      --api )
+        shift
+        api_url="$1"
+        ;;
+      * )
+        echo -e "${RED}Error: Argumento desconocido: $1${NC}"
+        show_help
+        exit 1
+        ;;
+    esac
+    shift
+  done
+  
+  # Validar que se hayan proporcionado los valores requeridos
+  if [ -z "$project" ] || [ -z "$api_url" ]; then
+    echo -e "${RED}Error: Faltan argumentos. Se requieren el proyecto y la URL de la API.${NC}"
+    show_help
+    exit 1
+  fi
+  
+  # Validar que el directorio existe
+  if [ ! -d "$directory" ]; then
+    echo -e "${RED}Error: El directorio '$directory' no existe.${NC}"
+    exit 1
+  fi
+  
+  echo -e "${GREEN}Iniciando escaneo de seguridad en: $directory${NC}"
+  echo -e "${GREEN}Proyecto: $project${NC}"
+  echo -e "${GREEN}API: $api_url${NC}"
+  echo -e "${BLUE}Archivos temporales: .openreport/${NC}"
+  echo ""
+  
+  # Crear directorio temporal para los reportes
+  local temp_dir=".openreport"
+  local timestamp=$(date +%Y%m%d_%H%M%S)
+  local trivy_output="$temp_dir/trivy-scan_$timestamp.json"
+  local gitleaks_output="$temp_dir/gitleaks-scan_$timestamp.json"
+  
+  # Crear directorio si no existe
+  mkdir -p "$temp_dir"
+  
+  # Instalar herramientas si es necesario
+  if ! install_trivy; then
+    echo -e "${RED}Error: No se pudo instalar Trivy. Abortando.${NC}"
+    exit 1
+  fi
+  
+  if ! install_gitleaks; then
+    echo -e "${RED}Error: No se pudo instalar Gitleaks. Abortando.${NC}"
+    exit 1
+  fi
+  
+  echo ""
+  
+  # Ejecutar escaneos
+  local trivy_success=false
+  local gitleaks_success=false
+  
+  if run_trivy_scan "$directory" "$trivy_output"; then
+    trivy_success=true
+  fi
+  
+  if run_gitleaks_scan "$directory" "$gitleaks_output"; then
+    gitleaks_success=true
+  fi
+  
+  echo ""
+  
+  # Subir reportes
+  local upload_success=true
+  
+  if [ "$trivy_success" = true ]; then
+    if ! upload_report "$trivy_output" "$project" "$api_url"; then
+      upload_success=false
+    fi
+  fi
+  
+  if [ "$gitleaks_success" = true ]; then
+    if ! upload_report "$gitleaks_output" "$project" "$api_url"; then
+      upload_success=false
+    fi
+  fi
+  
+  # Limpiar archivos temporales del escaneo actual
+  # rm -f "$trivy_output" "$gitleaks_output"
+  
+  # Si la carpeta está vacía, eliminarla también
+  if [ -z "$(ls -A "$temp_dir" 2>/dev/null)" ]; then
+    rmdir "$temp_dir"
+  fi
+  
+  echo ""
+  if [ "$upload_success" = true ]; then
+    echo -e "${GREEN}✅ Escaneo completado y reportes subidos exitosamente.${NC}"
+  else
+    echo -e "${RED}❌ Algunos reportes no se pudieron subir. Revisa los errores anteriores.${NC}"
+    exit 1
+  fi
+}
+
+# Función para el comando upload
+upload_command() {
+  local file=""
+  local project=""
+  local api_url=""
+
+  # Parsear los argumentos
+  shift # Elimina "upload" del array de argumentos
+  while [ "$1" != "" ]; do
+    case "$1" in
+      -p | --project )
+        shift
+        project="$1"
+        ;;
+      --api )
+        shift
+        api_url="$1"
+        ;;
+      * )
+        file="$1"
+        ;;
+    esac
+    shift
+  done
+
+  # Validar que se hayan proporcionado todos los valores
+  if [ -z "$file" ] || [ -z "$project" ] || [ -z "$api_url" ]; then
+    echo -e "${RED}Error: Faltan argumentos. Se requieren el archivo, el proyecto y la URL de la API.${NC}"
+    show_help
+    exit 1
+  fi
+
+  # Validar si el archivo JSON existe
+  if [ ! -f "$file" ]; then
+    echo -e "${RED}Error: El archivo '$file' no existe.${NC}"
+    exit 1
+  fi
+
+  # Subir el reporte
+  if upload_report "$file" "$project" "$api_url"; then
+    exit 0
+  else
+    exit 1
+  fi
 }
 
 # La lógica principal de la CLI
 main() {
   if [ "$1" == "upload" ]; then
-    local file=""
-    local project=""
-    local api_url=""
-
-    # Parsear los argumentos
-    shift # Elimina "upload" del array de argumentos
-    while [ "$1" != "" ]; do
-      case "$1" in
-        -p | --project )
-          shift
-          project="$1"
-          ;;
-        --api )
-          shift
-          api_url="$1"
-          ;;
-        * )
-          file="$1"
-          ;;
-      esac
-      shift
-    done
-
-    # Validar que se hayan proporcionado todos los valores
-    if [ -z "$file" ] || [ -z "$project" ] || [ -z "$api_url" ]; then
-      echo "Error: Faltan argumentos. Se requieren el archivo, el proyecto y la URL de la API."
-      show_help
-      exit 1
-    fi
-
-    # Validar si el archivo JSON existe
-    if [ ! -f "$file" ]; then
-      echo "Error: El archivo '$file' no existe."
-      exit 1
-    fi
-
-    # Construye la URL completa
-    local endpoint_url="${api_url}/api/projects/${project}/upload"
-
-    echo "Subiendo '$file' a '$endpoint_url'..."
-
-    # Realiza la petición POST con curl
-    response=$(curl -s -X POST \
-         -H "Content-Type: application/json" \
-         --data-binary "@$file" \
-         "$endpoint_url")
-    
-    # Verificar si la respuesta fue exitosa
-    if [ $? -eq 0 ]; then
-      # Extraer la URL del reporte de la respuesta JSON
-      report_url=$(echo "$response" | grep -o '"reportUrl":"[^"]*"' | cut -d'"' -f4)
-      
-      if [ -n "$report_url" ]; then
-        echo "Reporte subido: $report_url"
-      else
-        echo "Reporte subido exitosamente, pero no se pudo obtener la URL del reporte."
-        echo "Respuesta de la API: $response"
-      fi
-    else
-      echo "Error al subir el reporte."
-      echo "Respuesta de la API: $response"
-    fi
-
+    upload_command "$@"
+  elif [ "$1" == "scan" ]; then
+    scan_command "$@"
   else
     show_help
+    exit 1
   fi
 }
 
