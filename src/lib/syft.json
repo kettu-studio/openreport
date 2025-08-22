@@ -1,0 +1,93 @@
+{
+  "artifacts": [
+    {
+      "id": "alpine-baselayout@alpine-baselayout-1.0.0-r0",
+      "name": "alpine-baselayout",
+      "version": "1.0.0-r0",
+      "type": "apk",
+      "foundBy": "apk-db-cataloger",
+      "locations": [
+        {
+          "path": "/lib/apk/db/installed"
+        }
+      ],
+      "licenses": [
+        "GPL-2.0-only"
+      ],
+      "language": "",
+      "cpes": [
+        "cpe:2.3:a:alpine:alpine-baselayout:1.0.0-r0:*:*:*:*:*:*:*:*"
+      ],
+      "purl": "pkg:alpine/alpine-baselayout@1.0.0-r0?arch=x86_64"
+    },
+    {
+      "id": "alpine-keys@alpine-keys-2.4-r1",
+      "name": "alpine-keys",
+      "version": "2.4-r1",
+      "type": "apk",
+      "foundBy": "apk-db-cataloger",
+      "locations": [
+        {
+          "path": "/lib/apk/db/installed"
+        }
+      ],
+      "licenses": [
+        "MIT"
+      ],
+      "language": "",
+      "cpes": [
+        "cpe:2.3:a:alpine:alpine-keys:2.4-r1:*:*:*:*:*:*:*:*"
+      ],
+      "purl": "pkg:alpine/alpine-keys@2.4-r1?arch=x86_64"
+    },
+    {
+      "id": "node@node-18.19.0-r0",
+      "name": "node",
+      "version": "18.19.0-r0",
+      "type": "apk",
+      "foundBy": "apk-db-cataloger",
+      "locations": [
+        {
+          "path": "/lib/apk/db/installed"
+        }
+      ],
+      "licenses": [
+        "MIT"
+      ],
+      "language": "javascript",
+      "cpes": [
+        "cpe:2.3:a:nodejs:node:18.19.0-r0:*:*:*:*:*:*:*:*"
+      ],
+      "purl": "pkg:alpine/node@18.19.0-r0?arch=x86_64",
+      "metadata": {
+        "description": "JavaScript runtime built on Chrome's V8 engine",
+        "homepage": "https://nodejs.org/"
+      }
+    }
+  ],
+  "source": {
+    "type": "image",
+    "target": {
+      "image": "node:18-alpine"
+    }
+  },
+  "distro": {
+    "name": "alpine",
+    "version": "3.18"
+  },
+  "descriptor": {
+    "name": "syft",
+    "version": "1.0.0"
+  },
+  "schema": {
+    "version": "1.0.0",
+    "url": "https://docs.syft.dev/schema/json/1.0.0/schema.json"
+  },
+  "metadata": {
+    "repoURL": "https://github.com/example/project",
+    "branch": "main",
+    "commit": "abc123def456",
+    "author": "developer@example.com",
+    "createdAt": "2024-01-15T10:30:00Z"
+  }
+}

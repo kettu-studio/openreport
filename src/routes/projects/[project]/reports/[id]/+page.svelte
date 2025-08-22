@@ -2,6 +2,7 @@
   let { data, params } = $props<any>();
   import ReportView from '$lib/report/ReportView.svelte';
   import GitleaksView from '$lib/report/GitleaksView.svelte';
+  import SyftView from '$lib/report/SyftView.svelte';
   
   async function deleteReport() {
     if (!confirm('¿Estás seguro de que quieres eliminar este reporte? Esta acción no se puede deshacer.')) {
@@ -37,6 +38,12 @@
     />
   {:else if data.kind === 'gitleaks'}
     <GitleaksView 
+      prepared={data.prepared}
+      project={params.project}
+      onDelete={deleteReport}
+    />
+  {:else if data.kind === 'syft'}
+    <SyftView 
       prepared={data.prepared}
       project={params.project}
       onDelete={deleteReport}

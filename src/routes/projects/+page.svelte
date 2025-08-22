@@ -12,6 +12,49 @@
     <a href="/projects/create" class={buttonVariants({ variant: 'default' })}>Crear proyecto</a>
   </div>
 
+  <!-- CLI Information Card -->
+  <Card>
+    <CardHeader>
+      <CardTitle class="flex items-center gap-2">
+        🚀 CLI de OpenReport
+      </CardTitle>
+      <CardDescription>
+        Instala y usa la CLI para escanear repositorios automáticamente
+      </CardDescription>
+    </CardHeader>
+    <CardContent class="space-y-4">
+      <div>
+        <h4 class="font-medium mb-2">📥 Instalación:</h4>
+        <div class="bg-muted p-3 rounded-md font-mono text-sm">
+          curl -L -o openreport https://raw.githubusercontent.com/kettu-studio/openreport/main/cli/openreport && chmod +x openreport && sudo mv openreport /usr/local/bin/
+        </div>
+      </div>
+      
+      <div>
+        <h4 class="font-medium mb-2">🔍 Comando de escaneo:</h4>
+        <div class="bg-muted p-3 rounded-md font-mono text-sm">
+          openreport scan ./ -p nombre-proyecto --api https://openreport.kettu.tech
+        </div>
+        <p class="text-sm text-muted-foreground mt-2">
+          Este comando instalará automáticamente Trivy, Gitleaks y Syft, escaneará el directorio actual y subirá los reportes al proyecto especificado.
+        </p>
+      </div>
+
+      <div>
+        <h4 class="font-medium mb-2">📤 Subir reporte existente:</h4>
+        <div class="bg-muted p-3 rounded-md font-mono text-sm">
+          openreport upload reporte.json -p nombre-proyecto --api https://openreport.kettu.tech
+        </div>
+      </div>
+
+      <div class="pt-2 border-t">
+        <p class="text-sm text-muted-foreground">
+          💡 <strong>Tip:</strong> La CLI detecta automáticamente el tipo de reporte (Trivy, Gitleaks, Syft) y lo procesa correctamente. Syft analiza dependencias y paquetes del proyecto.
+        </p>
+      </div>
+    </CardContent>
+  </Card>
+
   <div class="grid gap-4 sm:grid-cols-2">
     {#each data.projects as p}
       <Card>
