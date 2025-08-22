@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: openreport
+  labels:
+    name: openreport
+    app: openreport

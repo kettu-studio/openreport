@@ -1,0 +1,96 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: openreport
+  namespace: openreport
+  labels:
+    app: openreport
+    version: v1
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: openreport
+  template:
+    metadata:
+      labels:
+        app: openreport
+        version: v1
+    spec:
+      containers:
+      - name: openreport
+        image: kettustudio/openreport:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 3000
+          name: http
+          protocol: TCP
+        env:
+        - name: NODE_ENV
+          value: "production"
+        - name: PORT
+          value: "3000"
+        volumeMounts:
+        - name: data-storage
+          mountPath: /app/data
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 3000
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 3
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 3000
+          initialDelaySeconds: 5
+          periodSeconds: 5
+          timeoutSeconds: 3
+          failureThreshold: 3
+      volumes:
+      - name: data-storage
+        persistentVolumeClaim:
+          claimName: openreport-data-pvc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: openreport-service
+  namespace: openreport
+  labels:
+    app: openreport
+spec:
+  type: ClusterIP
+  ports:
+  - port: 80
+    targetPort: 3000
+    protocol: TCP
+    name: http
+  selector:
+    app: openreport
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: openreport-ingress
+  namespace: openreport
+  labels:
+    app: openreport
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: openreport.local  # Cambiar por tu dominio real
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: openreport-service
+            port:
+              number: 80
