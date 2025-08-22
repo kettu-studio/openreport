@@ -1,6 +1,7 @@
 <script lang="ts">
 	import '../app.css';
 	import favicon from '$lib/assets/favicon.svg';
+	import GithubIcon from '@lucide/svelte/icons/github';
 	
 	let { children } = $props();
 </script>
@@ -14,6 +15,15 @@
 		<a href="/" class="text-sm font-semibold">OpenReport</a>
 		<a href="/projects" class="text-sm text-muted-foreground hover:text-foreground">Projects</a>
 		<div class="ml-auto"></div>
+		<a 
+			href="https://github.com/kettu-studio/openreport" 
+			target="_blank" 
+			rel="noopener noreferrer"
+			class="text-muted-foreground hover:text-foreground transition-colors"
+			title="Ver en GitHub"
+		>
+			<GithubIcon class="w-5 h-5" />
+		</a>
 	</nav>
 </header>
 
