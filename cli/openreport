@@ -20,16 +20,20 @@ show_help() {
   echo "    -p, --project: Nombre del proyecto de destino."
   echo "    --api: URL base de la API (ej. https://openreport.kettu.tech)."
   echo
-  echo "  scan <directorio> -p <proyecto> --api <url>"
-  echo "    Escanea un directorio con Trivy, Gitleaks y Syft, y sube los reportes."
+  echo "  scan <directorio> -p <proyecto> --api <url> [-s <herramientas>]"
+  echo "    Escanea un directorio con las herramientas especificadas y sube los reportes."
   echo "    <directorio>: Ruta al directorio a escanear (por defecto: ./)."
   echo "    -p, --project: Nombre del proyecto de destino."
   echo "    --api: URL base de la API (ej. https://openreport.kettu.tech)."
+  echo "    -s, --scanners: Herramientas a usar separadas por comas (trivy,gitleaks,syft)."
+  echo "                    Por defecto usa las tres herramientas."
   echo
   echo "Ejemplos:"
   echo "  openreport upload results.json -p mi-proyecto --api https://openreport.kettu.tech"
   echo "  openreport scan ./ -p mi-proyecto --api https://openreport.kettu.tech"
   echo "  openreport scan /path/to/project -p proyecto-prod --api https://openreport.kettu.tech"
+  echo "  openreport scan ./ -p mi-proyecto --api https://openreport.kettu.tech -s trivy,gitleaks"
+  echo "  openreport scan ./ -p mi-proyecto --api https://openreport.kettu.tech --scanners syft"
 }
 
 # Función para instalar Trivy
@@ -242,6 +246,7 @@ scan_command() {
   local directory="./"
   local project=""
   local api_url=""
+  local scanners="trivy,gitleaks,syft" # Default scanners
   
   # Parsear los argumentos
   shift # Elimina "scan" del array de argumentos
@@ -261,6 +266,10 @@ scan_command() {
       --api )
         shift
         api_url="$1"
+        ;;
+      -s | --scanners )
+        shift
+        scanners="$1"
         ;;
       * )
         echo -e "${RED}Error: Argumento desconocido: $1${NC}"
@@ -284,9 +293,38 @@ scan_command() {
     exit 1
   fi
   
+  # Convertir la lista de scanners a un array y validar
+  IFS=',' read -ra SCANNER_ARRAY <<< "$scanners"
+  local valid_scanners=()
+  local invalid_scanners=()
+  
+  for scanner in "${SCANNER_ARRAY[@]}"; do
+    scanner=$(echo "$scanner" | tr '[:upper:]' '[:lower:]' | xargs) # Normalizar
+    case "$scanner" in
+      "trivy"|"gitleaks"|"syft")
+        valid_scanners+=("$scanner")
+        ;;
+      *)
+        invalid_scanners+=("$scanner")
+        ;;
+    esac
+  done
+  
+  if [ ${#invalid_scanners[@]} -gt 0 ]; then
+    echo -e "${RED}Error: Herramientas de escaneo no válidas: ${invalid_scanners[*]}${NC}"
+    echo -e "${YELLOW}Herramientas válidas: trivy, gitleaks, syft${NC}"
+    exit 1
+  fi
+  
+  if [ ${#valid_scanners[@]} -eq 0 ]; then
+    echo -e "${RED}Error: Debe especificar al menos una herramienta de escaneo válida.${NC}"
+    exit 1
+  fi
+  
   echo -e "${GREEN}Iniciando escaneo de seguridad en: $directory${NC}"
   echo -e "${GREEN}Proyecto: $project${NC}"
   echo -e "${GREEN}API: $api_url${NC}"
+  echo -e "${GREEN}Herramientas de escaneo: $scanners${NC}"
   echo -e "${BLUE}Archivos temporales: .openreport/${NC}"
   echo ""
   
@@ -300,60 +338,127 @@ scan_command() {
   # Crear directorio si no existe
   mkdir -p "$temp_dir"
   
-  # Instalar herramientas si es necesario
-  if ! install_trivy; then
-    echo -e "${RED}Error: No se pudo instalar Trivy. Abortando.${NC}"
-    exit 1
+  # Instalar herramientas si es necesario (solo las especificadas)
+  local tools_available=0
+  
+  echo -e "${BLUE}Verificando herramientas de escaneo...${NC}"
+  
+  # Verificar Trivy solo si está en la lista
+  if [[ " ${valid_scanners[*]} " =~ " trivy " ]]; then
+    if install_trivy; then
+      echo -e "${GREEN}✅ Trivy disponible${NC}"
+      tools_available=$((tools_available + 1))
+    else
+      echo -e "${YELLOW}⚠️  Trivy no disponible - se omitirá este escaneo${NC}"
+    fi
   fi
   
-  if ! install_gitleaks; then
-    echo -e "${RED}Error: No se pudo instalar Gitleaks. Abortando.${NC}"
-    exit 1
+  # Verificar Gitleaks solo si está en la lista
+  if [[ " ${valid_scanners[*]} " =~ " gitleaks " ]]; then
+    if install_gitleaks; then
+      echo -e "${GREEN}✅ Gitleaks disponible${NC}"
+      tools_available=$((tools_available + 1))
+    else
+      echo -e "${YELLOW}⚠️  Gitleaks no disponible - se omitirá este escaneo${NC}"
+    fi
   fi
   
-  if ! install_syft; then
-    echo -e "${RED}Error: No se pudo instalar Syft. Abortando.${NC}"
+  # Verificar Syft solo si está en la lista
+  if [[ " ${valid_scanners[*]} " =~ " syft " ]]; then
+    if install_syft; then
+      echo -e "${GREEN}✅ Syft disponible${NC}"
+      tools_available=$((tools_available + 1))
+    else
+      echo -e "${YELLOW}⚠️  Syft no disponible - se omitirá este escaneo${NC}"
+    fi
+  fi
+  
+  if [ $tools_available -eq 0 ]; then
+    echo -e "${RED}❌ Error: No se pudo instalar ninguna de las herramientas especificadas.${NC}"
     exit 1
   fi
   
   echo ""
   
-  # Ejecutar escaneos
+  # Ejecutar escaneos (solo los especificados y disponibles)
   local trivy_success=false
   local gitleaks_success=false
   local syft_success=false
+  local scans_completed=0
   
-  if run_trivy_scan "$directory" "$trivy_output"; then
-    trivy_success=true
+  echo -e "${BLUE}Ejecutando escaneos de seguridad...${NC}"
+  
+  # Solo ejecutar Trivy si está especificado y disponible
+  if [[ " ${valid_scanners[*]} " =~ " trivy " ]] && command -v trivy &> /dev/null; then
+    if run_trivy_scan "$directory" "$trivy_output"; then
+      trivy_success=true
+      scans_completed=$((scans_completed + 1))
+      echo -e "${GREEN}✅ Escaneo de Trivy completado${NC}"
+    else
+      echo -e "${YELLOW}⚠️  Escaneo de Trivy falló - se omitirá${NC}"
+    fi
   fi
   
-  if run_gitleaks_scan "$directory" "$gitleaks_output"; then
-    gitleaks_success=true
+  # Solo ejecutar Gitleaks si está especificado y disponible
+  if [[ " ${valid_scanners[*]} " =~ " gitleaks " ]] && command -v gitleaks &> /dev/null; then
+    if run_gitleaks_scan "$directory" "$gitleaks_output"; then
+      gitleaks_success=true
+      scans_completed=$((scans_completed + 1))
+      echo -e "${GREEN}✅ Escaneo de Gitleaks completado${NC}"
+    else
+      echo -e "${YELLOW}⚠️  Escaneo de Gitleaks falló - se omitirá${NC}"
+    fi
   fi
   
-  if run_syft_scan "$directory" "$syft_output"; then
-    syft_success=true
+  # Solo ejecutar Syft si está especificado y disponible
+  if [[ " ${valid_scanners[*]} " =~ " syft " ]] && command -v syft &> /dev/null; then
+    if run_syft_scan "$directory" "$syft_output"; then
+      syft_success=true
+      scans_completed=$((scans_completed + 1))
+      echo -e "${GREEN}✅ Escaneo de Syft completado${NC}"
+    else
+      echo -e "${YELLOW}⚠️  Escaneo de Syft falló - se omitirá${NC}"
+    fi
   fi
   
   echo ""
   
-  # Subir reportes
+  if [ $scans_completed -eq 0 ]; then
+    echo -e "${RED}❌ Error: Ningún escaneo se completó exitosamente.${NC}"
+    exit 1
+  fi
+  
+  # Subir reportes (solo los que se completaron exitosamente)
+  echo -e "${BLUE}Subiendo reportes...${NC}"
   local upload_success=true
+  local uploads_completed=0
   
   if [ "$trivy_success" = true ]; then
-    if ! upload_report "$trivy_output" "$project" "$api_url"; then
+    if upload_report "$trivy_output" "$project" "$api_url"; then
+      uploads_completed=$((uploads_completed + 1))
+      echo -e "${GREEN}✅ Reporte de Trivy subido${NC}"
+    else
+      echo -e "${YELLOW}⚠️  Fallo al subir reporte de Trivy${NC}"
       upload_success=false
     fi
   fi
   
   if [ "$gitleaks_success" = true ]; then
-    if ! upload_report "$gitleaks_output" "$project" "$api_url"; then
+    if upload_report "$gitleaks_output" "$project" "$api_url"; then
+      uploads_completed=$((uploads_completed + 1))
+      echo -e "${GREEN}✅ Reporte de Gitleaks subido${NC}"
+    else
+      echo -e "${YELLOW}⚠️  Fallo al subir reporte de Gitleaks${NC}"
       upload_success=false
     fi
   fi
   
   if [ "$syft_success" = true ]; then
-    if ! upload_report "$syft_output" "$project" "$api_url"; then
+    if upload_report "$syft_output" "$project" "$api_url"; then
+      uploads_completed=$((uploads_completed + 1))
+      echo -e "${GREEN}✅ Reporte de Syft subido${NC}"
+    else
+      echo -e "${YELLOW}⚠️  Fallo al subir reporte de Syft${NC}"
       upload_success=false
     fi
   fi
@@ -367,10 +472,18 @@ scan_command() {
   fi
   
   echo ""
-  if [ "$upload_success" = true ]; then
-    echo -e "${GREEN}✅ Escaneo completado y reportes subidos exitosamente.${NC}"
+  echo -e "${GREEN}📊 Resumen del escaneo:${NC}"
+  echo -e "   • Herramientas especificadas: ${#valid_scanners[@]}"
+  echo -e "   • Escaneos completados: $scans_completed/$tools_available"
+  echo -e "   • Reportes subidos: $uploads_completed/$scans_completed"
+  
+  if [ "$upload_success" = true ] && [ $uploads_completed -gt 0 ]; then
+    echo -e "${GREEN}✅ Escaneo completado exitosamente.${NC}"
+    if [ $uploads_completed -lt $scans_completed ]; then
+      echo -e "${YELLOW}⚠️  Algunos reportes no se pudieron subir, pero el proceso continuó.${NC}"
+    fi
   else
-    echo -e "${RED}❌ Algunos reportes no se pudieron subir. Revisa los errores anteriores.${NC}"
+    echo -e "${RED}❌ No se pudo subir ningún reporte.${NC}"
     exit 1
   fi
 }
