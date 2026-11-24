@@ -1,5 +1,9 @@
 # OpenReport 🚀
 
+OpenReport is not maintained in favor of [GetGitOps.com](https://github.com/getgitops/gitops)
+
+Please Move to [GetGitOps.com](https://github.com/getgitops/gitops)
+
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Docker](https://img.shields.io/badge/Docker-Ready-blue.svg)](https://hub.docker.com/r/kettustudio/openreport)
 [![Svelte](https://img.shields.io/badge/Svelte-5.0-ff3e00.svg)](https://svelte.dev/)
